@@ -1,6 +1,8 @@
 
 <?php
 
+use App\Models\Setting;
+
 if (!function_exists('statusType')) {
     function statusType()
     {
@@ -78,5 +80,11 @@ if (! function_exists('getTableName')) {
         return __(
             'site.' . \Illuminate\Support\Str::plural(strtolower($className))
         );
+    }
+}
+if (! function_exists('setting')) {
+    function setting($key, $default = null)
+    {
+        return Setting::where('key', $key)->value('value') ?? $default;
     }
 }

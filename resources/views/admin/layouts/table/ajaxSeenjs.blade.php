@@ -31,7 +31,7 @@
                 url: url,
                 type: 'GET',
                 success: function(response) {
-                    if (response.seen) {
+                    if (response.is_read) {
                         button.removeClass('btn-danger').addClass('btn-success disabled');
                         button.find('i').removeClass('fa-circle-xmark').addClass(
                             'fa-check');

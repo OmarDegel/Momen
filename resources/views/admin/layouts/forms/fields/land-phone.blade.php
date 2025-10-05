@@ -7,7 +7,9 @@ $field_name = 'phone';
 if (isset($text_name)) {
     $field_name = $text_name;
 }
-$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'data-parsley-minlength' => $minlength ?? '10', 'disabled' => $disable ?? false, 'readonly' => $read_only ?? false, 'data-parsley-type' => $text_type ?? 'number', 'data-parsley-pattern' => $pattern ?? '^0[0-99][0-9]{7,8}'];
+$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'data-parsley-minlength' => $minlength ?? '10', 'data-parsley-type' => $text_type ?? 'number', 'data-parsley-pattern' => $pattern ?? '^0[0-99][0-9]{7,8}'];
+if (!empty($disable)) $array_control['disabled'] = 'disabled';
+if (!empty($read_only)) $array_control['readonly'] = 'readonly';
 if (!isset($not_req)) {
     $array_control['required'] = '';
 }

@@ -8,7 +8,9 @@ $field_name = 'price';
 if (isset($number_name)) {
     $field_name = $number_name;
 }
-$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'disabled' => $disable ?? false, 'readonly' => $read_only ?? false, 'data-parsley-type' => $number_type ?? 'number'];
+$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'data-parsley-type' => $number_type ?? 'number'];
+if (!empty($disable)) $array_control['disabled'] = 'disabled';
+if (!empty($read_only)) $array_control['readonly'] = 'readonly';
 if (!isset($not_req)) {
     $array_control['required'] = '';
 }

@@ -17,7 +17,7 @@ class PermissionMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-         public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $routeName = $request->route()->getName();
 
@@ -27,7 +27,6 @@ class PermissionMiddleware
         }
 
         $routeName = Str::replaceFirst('dashboard.', '', $routeName);
-
 
 
         if (Str::endsWith($routeName, '.edit')) {
@@ -50,7 +49,6 @@ class PermissionMiddleware
 
             return redirect()->route('dashboard.unauthorized');
         }
-
 
         return $next($request);
     }

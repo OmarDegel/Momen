@@ -7,12 +7,16 @@ $add_class = $date_class;
 $array_control = [
 'class' => 'form-control ' . $add_class,
 'data-parsley-trigger' => 'input',
-'disabled' => $disable ?? false,
-'readonly' => $read_only ?? false,
-];
 
+];
+if(isset($read_only)){
+$array_control['readonly'] = 'readonly';
+}
+if(isset($disable)){
+$array_control['disabled'] = 'disabled';
+}
 if (!isset($not_req)) {
-$array_control['required'] = true; // boolean بدل string
+$array_control['required'] = true; 
 }
 
 if (isset($date_id)) {

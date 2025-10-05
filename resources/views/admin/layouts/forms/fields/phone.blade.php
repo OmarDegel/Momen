@@ -14,7 +14,9 @@ if (isset($international)) {
 if (isset($land)) {
     $pattern = '^0[0-99][0-9]{7,9}';
 }
-$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'data-parsley-minlength' => $minlength ?? '10', 'disabled' => $disable ?? false, 'readonly' => $read_only ?? false, 'data-parsley-type' => $text_type ?? 'number'];
+$array_control = ['class' => 'form-control ' . $add_class, 'data-parsley-trigger' => 'input', 'data-parsley-minlength' => $minlength ?? '10',  'data-parsley-type' => $text_type ?? 'number'];
+if (!empty($disable)) $array_control['disabled'] = 'disabled';
+if (!empty($read_only)) $array_control['readonly'] = 'readonly';
 if (!isset($not_req)) {
     $array_control['required'] = '';
 }

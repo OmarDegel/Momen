@@ -19,10 +19,12 @@ class AdminMiddleware
         $auth = auth()->user();
 
         if ($auth && $auth->type == 'admin'  && $auth->active) {
-            app()->setLocale($auth->lang);
+            config(['activitylog.enabled' => true]);
+
+            app()->setLocale($auth->locale);
             View::share([
-                'admin_language' => $auth->lang,
-                'admin_dir' => $auth->lang == 'ar' ? 'rtl' : 'ltr',
+                'admin_language' => $auth->locale,
+                'admin_dir' => $auth->locale == 'ar' ? 'rtl' : 'ltr',
                 'admin_theme_style' => $auth->theme,
             ]);
             return $next($request);

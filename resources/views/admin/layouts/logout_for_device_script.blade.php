@@ -1,4 +1,4 @@
-<script>
+{{-- <script>
 
    $(document).on('click', '.logout-session', function() {
     let sessionId = $(this).data('id');
@@ -27,4 +27,4 @@
     }
 });
 
-</script>
+</script> --}}

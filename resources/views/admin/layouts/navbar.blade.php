@@ -51,7 +51,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item"
-                            href="">
+                            href="{{ route('dashboard.profile.index') }}">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
@@ -60,7 +60,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="fw-medium d-block">{{ auth()->user()->first_name }}</span>
+                                    <span class="fw-medium d-block">{{ auth()->user()->name_first }}</span>
                                     <small class="text-muted">{{ __('site.admin') }}</small>
                                 </div>
                             </div>

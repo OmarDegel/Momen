@@ -34,7 +34,7 @@
                 @endif
 
                 @endif
-
+                @if($item->deleted_at == null)
                 @if (isset($delete))
 
                 @if (auth()->user()->hasPermission($model.'.destroy'))
@@ -45,6 +45,28 @@
                 @else
                 <button class="dropdown-item" disabled>
                     <i class="ti ti-trash me-1"></i> @lang('site.delete')
+                </button>
+                @endif
+                @endif
+                @endif
+                @if($item->deleted_at != null)
+                @if (auth()->user()->hasPermission($model.'.restore'))
+                <a class="dropdown-item" href="{{ route('dashboard.'.$model.'.restore', $item->id) }}">
+                    <i class="ti ti-restore me-1"></i> @lang('site.restore')
+                </a>
+                @else
+                <button disabled class="dropdown-item" disabled>
+                    <i class="ti ti-trash-restore me-1"></i> @lang('site.restore')
+                </button>
+                @endif
+                 @if (auth()->user()->hasPermission($model.'.forceDelete'))
+                <button class="dropdown-item delete-btn" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal{{ $item->id }}">
+                    <i class="ti ti-trash-off me-1"></i> @lang('site.forceDelete')
+                </button>
+                @else
+                <button class="dropdown-item" disabled>
+                    <i class="ti ti-trash-off me-1"></i> @lang('site.forceDelete')
                 </button>
                 @endif
                 @endif

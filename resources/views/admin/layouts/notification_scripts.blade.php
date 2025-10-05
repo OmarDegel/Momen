@@ -1,4 +1,4 @@
-<audio id="notification-sound" src="{{ asset('sounds/notification.mp3') }}" preload="auto"></audio>
+{{-- <audio id="notification-sound" src="{{ asset('sounds/notification.mp3') }}" preload="auto"></audio>
 
 <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.iife.js"></script>
@@ -44,4 +44,4 @@
             }
         });
     });
-</script>
+</script> --}}

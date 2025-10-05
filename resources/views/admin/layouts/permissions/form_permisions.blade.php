@@ -1,5 +1,5 @@
 @php
-$types = ['index', 'show', 'store', 'update', 'active', 'destroy'];
+$types = ['index', 'show', 'store', 'update', 'active', 'destroy', 'forceDelete', 'restore'];
 @endphp
 
 <div class="col-12">

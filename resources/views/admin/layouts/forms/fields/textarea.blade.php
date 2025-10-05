@@ -7,7 +7,13 @@ $add_class = $text_class;
 if (isset($text_name)) {
 $field_name = $text_name;
 }
-$array_control = ['class' => 'form-control' . $add_class, 'data-parsley-trigger' => 'textarea', 'rows' => $rows ?? '5', 'cols' => $cols ?? '50', 'disabled' => $disable ?? false, 'readonly' => $read_only ?? false];
+$array_control = ['class' => 'form-control' . $add_class, 'data-parsley-trigger' => 'textarea', 'rows' => $rows ?? '5', 'cols' => $cols ?? '50'];
+if(isset($disable)){
+    $array_control['disabled'] = true;
+}
+if(isset($read_only)){
+    $array_control['readonly'] = true;
+}
 if (!isset($not_req)) {
 $array_control['required'] = '';
 }

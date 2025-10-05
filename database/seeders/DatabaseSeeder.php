@@ -16,14 +16,30 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
 
-        $this->call(LaratrustSeeder::class);
+        $this->call(
+            [
+                LaratrustSeeder::class,
+                CategorySeeder::class,
+                SizeSeeder::class,
+                CurrencySeeder::class,
+                CountrySeeder::class,
+                CitySeeder::class,
+                RegionSeeder::class,
+                ContactSeeder::class,
+                ColorSeeder::class,
+                BrandSeeder::class,
+                ProductSeeder::class,
+                SettingSeeder::class
+                
+            ]
+        );
         $user = User::create([
-            'first_name' => 'omar',
-            'last_name' => 'samy',
+            'name_first' => 'omar',
+            'name_last' => 'samy',
             'email' => 'osamy8088@gmail.com',
             'password' => '12345678',
             'phone' => '01019631989',
-            'lang' => 'en',
+            'locale' => 'en',
             'theme' => 'light',
             'type' => 'admin'
         ]);

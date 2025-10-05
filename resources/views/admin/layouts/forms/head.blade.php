@@ -54,7 +54,7 @@
                         @if($show_content ?? false)
                         <div class="col-sm-12">
                             @include('admin.layouts.forms.fields.textarea', [
-                            'text_name' => 'description[en]',
+                            'text_name' => 'content[en]',
                             'text_value' => $content_en ?? null,
                             'label_name' => __('site.english_content'),
                             'not_req' => true,
@@ -103,7 +103,7 @@
                         @if($show_content ?? false)
                         <div class="col-sm-12">
                             @include('admin.layouts.forms.fields.textarea', [
-                            'text_name' => 'description[ar]',
+                            'text_name' => 'content[ar]',
                             'text_value' => $content_ar ?? null,
                             'label_name' => __('site.arabic_content'),
                             'not_req' => true,

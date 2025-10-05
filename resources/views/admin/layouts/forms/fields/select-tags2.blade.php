@@ -13,7 +13,9 @@ if (isset($read_only)) {
 if (!isset($select2)) {
     $select2_class = "js-example-tags";
 }
-$array_control = ['class' =>'form-control '.$select2_class .' ' . $add_class, 'data-parsley-trigger' => 'select', 'disabled' => $disable ?? false, 'readonly' => $read_only ?? false, 'style' => 'width: 100%'];
+$array_control = ['class' =>'form-control '.$select2_class .' ' . $add_class, 'data-parsley-trigger' => 'select',  'style' => 'width: 100%'];
+if (!empty($disable)) $array_control['disabled'] = 'disabled';
+if (!empty($read_only)) $array_control['readonly'] = 'readonly';
 if (!isset($not_req)) {
     $array_control['required'] = '';
 }
