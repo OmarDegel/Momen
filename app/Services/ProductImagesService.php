@@ -9,16 +9,14 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class ProductImagesService
 {
-    public function uploadImage($folder = 'products', $request, $productId, $width = 800, $height = 600)
+    public function uploadImage($folder = 'products', $images, $productId, $width = 800, $height = 600)
     {
-        if (!$request->hasFile('images')) {
-            return null;
-        }
+        if (empty($images)) return null;
 
         $manager = new ImageManager(new Driver());
         $uploaded = [];
 
-        foreach ($request->file('images') as $file) {
+        foreach ($images as $file) {
             $image = $manager->read($file->getRealPath());
 
             $image->resize($width, $height, function ($constraint) {
@@ -65,11 +63,11 @@ class ProductImagesService
         }
     }
 
-    public function editImages($request, $product, $folder)
+    public function editImages($images,  $product, $folder)
     {
-        if ($request->hasFile('images')) {
+        if (is_array($images) && count($images) > 0) {
             $this->deleteImage($product->id);
-            return $this->uploadImage($folder, $request, $product->id, width: 800, height: 600);
+            return $this->uploadImage($folder, $images, $product->id, width: 800, height: 600);
         }
 
         return $product->galleries;

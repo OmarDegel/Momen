@@ -38,7 +38,7 @@ class UserRequest extends FormRequest
             $rules = array_merge($rules, [
                 "roles.*" => "required|exists:roles,id",
                 "vip" => "boolean",
-                "notify" => "boolean",
+                "is_notify" => "boolean",
                 "locale" => "in:ar,en",
                 "type" => "required"
             ]);

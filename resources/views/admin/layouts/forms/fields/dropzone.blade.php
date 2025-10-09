@@ -11,7 +11,6 @@
 
     <input type="file" name="{{ $name }}" id="hiddenImageInput" class="d-none" />
 
-    {{-- عرض رسالة الخطأ --}}
     @error($name)
         <span class="text-danger d-block mt-2">{{ $message }}</span>
     @enderror

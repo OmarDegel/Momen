@@ -2,19 +2,18 @@
 'show_name' => true,
 'show_content' => true,
 'show_image' => true,
-'name_ar' => $product?->nameLang('ar') ?? null,
-'name_en' => $product?->nameLang('en') ?? null,
-'content_ar' => $product?->contentLang('ar') ?? null,
-'content_en' => $product?->contentLang('en') ?? null,
+'name_ar' => $product?->nameLang('ar') ?? old("name.ar"),
+'name_en' => $product?->nameLang('en') ?? old("name.en"),
+'content_ar' => $product?->contentLang('ar') ?? old("content.ar"),
+'content_en' => $product?->contentLang('en') ?? old("content.en"),
 ])
 <div class="row">
 
     <div class="col-md-6">
         @include('admin.layouts.forms.fields.select', [
         'select_name' => 'brand_id',
-        'select_function' => ['' => __('site.select_option')] + $brands->mapWithKeys(fn($brand) => [$brand->id =>
-        $brand->nameLang()])->toArray() ?? null,
-        'select_value' => $product->brand_id ?? null,
+        'select_function' => ['' => __('site.select_option')] + $brands,
+        'select_value' => $product->brand_id ?? old("brand_id"),
         'select_class' => 'select2',
         'select2' => true,
         'not_req' => true,
@@ -40,46 +39,35 @@
 
 <div class="row">
 
-    <div class="col-md-4">
+    <div class="col-md-6">
         @include('admin.layouts.forms.fields.number', [
         'number_name' => 'order_max',
         'number_id' => 'order_max',
         'min' => 0,
         'placeholder' => __('site.order_max'),
-        'number_value' => $product->order_max ?? null,
+        'number_value' => $product->order_max ?? old("order_max"),
         'label_req' => true,
         ])
 
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         @include('admin.layouts.forms.fields.number', [
-        'number_name' => 'skip',
-        'number_id' => 'skip',
+        'number_name' => 'order_limit',
+        'number_id' => 'order_limit',
         'min' => 0,
-        'placeholder' => __('site.skip'),
-        'number_value' => $product->skip ?? null,
+        'placeholder' => __('site.order_limit'),
+        'number_value' => $product->order_limit ?? old("order_limit"),
         'label_req' => true,
         ])
 
     </div>
-    <div class="col-md-4">
-        @include('admin.layouts.forms.fields.number', [
-        'number_name' => 'start',
-        'number_id' => 'start',
-        'min' => 0,
-        'placeholder' => __('site.start'),
-        'number_value' => $product->start ?? null,
-        'label_req' => true,
-        ])
 
-    </div>
 
 </div>
 <div class="row">
     @include('admin.layouts.forms.fields.select', [
     'select_name' => 'size_id',
-    'select_function' => ['' => __('site.select_option')] + $sizes->mapWithKeys(fn($size) => [$size->id =>
-    $size->nameLang()])->toArray() ?? null,
+    'select_function' => ['' => __('site.select_option')] + $sizes ?? null,
     'select_value' => $product->size_id ?? null,
     'select_class' => 'select2',
     'select2' => true,
@@ -92,7 +80,7 @@
 
 @include('admin.products.includes.price_fields')
 
-@include('admin.products.includes.date_fields')
+{{-- @include('admin.products.includes.date_fields') --}}
 
 
 @include('admin.layouts.forms.fields.multi_dropzone', [

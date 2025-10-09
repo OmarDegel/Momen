@@ -15,6 +15,7 @@ enum PageEnum
             "faq" => __("site.faq"),
             "profile" => __("site.profile"),
             "support" => __("site.support"),
+            "slider" => __("site.slider"),
         ];
     }
 }

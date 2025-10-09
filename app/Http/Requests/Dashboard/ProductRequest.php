@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Dashboard;
 
+use Illuminate\Validation\Rule;
 use App\Rules\Product\OfferRule;
 use App\Rules\Product\FreeShippingRule;
 use App\Rules\Product\UniqueChildSizeRule;
@@ -23,10 +24,17 @@ class ProductRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
+    {   
         $productId = $this->route('product');
         return [
-            'code' => 'required|string|max:255|unique:products,code,' . $productId,
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products', 'code')
+                    ->ignore((int)$productId)
+                    ->whereNull('parent_id'),
+            ],
             'name.en' => 'required|string|max:255',
             'name.ar' => 'required|string|max:255',
             "content.ar" => "nullable|string|max:1000",
@@ -37,8 +45,7 @@ class ProductRequest extends FormRequest
             "categories.*" => "required|exists:categories,id",
 
             "order_max" => "required|numeric|min:1",
-            "skip" => "required|numeric|min:1",
-            "start" => "required|numeric|min:1",
+            "order_limit" => "required|numeric|min:1",
             "size_id" => "required|exists:sizes,id",
             "order_id" => "required|numeric|min:0",
             "active" => "required|boolean",
@@ -52,21 +59,22 @@ class ProductRequest extends FormRequest
             "is_late" => "required|boolean",
             "is_offer" => ['required', 'boolean', new OfferRule($this)],
             "is_shipping_free" => ['required', 'boolean', new FreeShippingRule($this)],
-            "images" => "required|array|min:1",
+            "images" => $productId ? "nullable|array" : "required|array|min:1",
             "images.*" => $productId ? "nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048" : "required|image|mimes:jpeg,png,jpg,gif,svg|max:2048",
             "price" => "required|numeric|min:0",
             "offer_price" => ['required_if:is_offer,true', 'numeric', 'min:0', new OfferRule($this)],
+            "link" => "required|string|max:50",
 
             'children' => ['nullable', 'array', new UniqueChildSizeRule()],
             'children.*.size_id' => ['required', 'exists:sizes,id'],
             'children.*.is_offer' => ['required', 'boolean'],
-            'children.*.colors' => ['required', 'array'],
-            'children.*.colors.*' => ['required', 'string', 'max:255'],
+            'children.*.color_id' => ['required', 'exists:colors,id'],
             'children.*.price' => ['required', 'numeric', 'min:1'],
             'children.*.offer_price' => ['nullable', 'numeric', 'min:1'],
+            'children.*.images' => ['nullable', 'array'],
+            'children.*.images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
 
-            "date_start" => "nullable|date",
-            "date_end" => "nullable|date",
+
         ];
     }
     public function messages()
@@ -193,5 +201,19 @@ class ProductRequest extends FormRequest
             'children.*.offer_price.numeric' => __("validation.numeric", ['attribute' => __('site.child_offer_price')]),
             'children.*.offer_price.min'     => __("validation.min.numeric", ['attribute' => __('site.child_offer_price'), 'min' => 1]),
         ];
+    }
+    public function withValidator($validator)
+    {
+        $validator->sometimes('children.*.images', 'required|array|min:1', function ($input) {
+            if (!isset($input->children)) return false;
+
+            foreach ($input->children as $child) {
+                if (empty($child['id'])) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     }
 }

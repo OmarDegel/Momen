@@ -24,23 +24,16 @@ return [
             "brands" => 'i,sh,s,u,a,d,fd,rd',
             "products" => 'i,sh,s,u,a,d,fd,rd',
             "reviews" => 'i,sh,s,u,a,d,fd,rd',
-
-            'users' => 'i,sh,s,u,a,d',
-            "units" => 'i,sh,s,u,a,d',
-
-            "services" => 'i,sh,s,u,a,d',
-            'additions' => 'i,sh,s,u,a,d',
-            'wishlists' => 'i,sh',
             "settings" => 'i,sh,s,u,a,d',
+            'users' => 'i,sh,s,u,a,d,fd,rd',
+            "payments" => 'i,sh,s,u,a,d,fd,rd',
+            'wishlists' => 'i,sh',
             "delivery_times" => "i,sh,s,u,a,d",
-            "payments" => 'i,sh,s,u,a,d',
             "addresses" => 'i,sh,s,u,a,d',
-            "sliders" => 'i,sh,s,u,a,d',
             "orders" => 'i,sh,s,u,a,d',
             "coupons" => 'i,sh,s,u,a,d',
             'activity_logs' => 'i,sh,u',
             'notifications' => 'i,s,sh',
-            'trash_buckets' => 'i',
 
 
         ],

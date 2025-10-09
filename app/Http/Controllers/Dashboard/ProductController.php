@@ -29,15 +29,25 @@ class ProductController extends MainController
     public function index(Request $request)
     {
         $data = ['categories', 'size', 'brand', 'children', 'parent'];
-        $products = Product::with($data)->filter($request, 'admin')->paginate($this->perPage);
+        $products = Product::with($data)->filter($request, 'admin')
+            ->where('parent_id', null)->paginate($this->perPage);
 
-        $colors = Color::active()->get()->mapWithKeys(function ($color) {
+        $colors = Color::active()->select(
+            'id',
+            'name'
+        )->get()->mapWithKeys(function ($color) {
             return [$color->id => $color->nameLang()];
         });
-        $brands = Brand::active()->get()->mapWithKeys(function ($brand) {
+        $brands = Brand::active()->select(
+            'id',
+            'name'
+        )->get()->mapWithKeys(function ($brand) {
             return [$brand->id => $brand->nameLang()];
         })->toArray();
-        $categories = Category::active()
+        $categories = Category::active()->select(
+            'id',
+            'name'
+        )
             ->with('parent')
             ->get()
             ->mapWithKeys(function ($category) {
@@ -51,18 +61,22 @@ class ProductController extends MainController
      */
     public function create()
     {
-        $brands = Brand::active()->get();
-        $sizes = Size::active()->get();
+        $brands = Brand::active()->select('id', 'name')->get()->mapWithKeys(function ($brand) {
+            return [$brand->id => $brand->nameLang()];
+        })->toArray();
+        $sizes = Size::active()->select('id', 'name')->get()->mapWithKeys(function ($size) {
+            return [$size->id => $size->nameLang()];
+        })->toArray();
 
         $categories = Category::active()
             ->with('parent')
             ->get()
             ->mapWithKeys(function ($category) {
                 return [$category->id => $category->nameLang()];
-            });
+            })->toArray();
         $colors = Color::active()->get()->mapWithKeys(function ($color) {
             return [$color->id => $color->nameLang()];
-        });
+        })->toArray();
         return view('admin.products.create', get_defined_vars());
     }
 
@@ -101,39 +115,44 @@ class ProductController extends MainController
 
     public function show(string $id)
     {
-        $colors = Color::active()->get()->mapWithKeys(function ($color) {
-            return [$color->id => $color->nameLang()];
-        });
-        $product = Product::with('children', 'colors','images','categories')->findOrFail($id);
-
-        $brands = Brand::active()->get();
-        $sizes = Size::active()->get();
+        $product = Product::with('children',  'images', 'categories')->findOrFail($id);
+        $brands = Brand::active()->select('id', 'name')->get()->mapWithKeys(function ($brand) {
+            return [$brand->id => $brand->nameLang()];
+        })->toArray();
+        $sizes = Size::active()->select('id', 'name')->get()->mapWithKeys(function ($size) {
+            return [$size->id => $size->nameLang()];
+        })->toArray();
 
         $categories = Category::active()
             ->with('parent')
             ->get()
             ->mapWithKeys(function ($category) {
                 return [$category->id => $category->nameLang()];
-            });
-
+            })->toArray();
+        $colors = Color::active()->get()->mapWithKeys(function ($color) {
+            return [$color->id => $color->nameLang()];
+        })->toArray();
         return view('admin.products.edit', get_defined_vars());
     }
     public function edit(string $id)
     {
-        $colors = Color::active()->get()->mapWithKeys(function ($color) {
-            return [$color->id => $color->nameLang()];
-        });
-        $product = Product::with('children', 'colors','images','categories')->findOrFail($id);
-
-        $brands = Brand::active()->get();
-        $sizes = Size::active()->get();
+        $product = Product::with('children', 'images', 'categories')->findOrFail($id);
+        $brands = Brand::active()->select('id', 'name')->get()->mapWithKeys(function ($brand) {
+            return [$brand->id => $brand->nameLang()];
+        })->toArray();
+        $sizes = Size::active()->select('id', 'name')->get()->mapWithKeys(function ($size) {
+            return [$size->id => $size->nameLang()];
+        })->toArray();
 
         $categories = Category::active()
             ->with('parent')
             ->get()
             ->mapWithKeys(function ($category) {
                 return [$category->id => $category->nameLang()];
-            });
+            })->toArray();
+        $colors = Color::active()->get()->mapWithKeys(function ($color) {
+            return [$color->id => $color->nameLang()];
+        })->toArray();
 
         return view('admin.products.edit', get_defined_vars());
     }
@@ -141,9 +160,9 @@ class ProductController extends MainController
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, $id)
     {
-        dd($request->all());
+        $product = Product::findOrFail($id);
         $data = $request->except('images');
         try {
             DB::transaction(function () use ($product, $data, $request) {
@@ -155,7 +174,7 @@ class ProductController extends MainController
 
                 $this->productService->handleProductChildren($request, $product);
 
-                $images = $this->productImagesService->editImages($request, $product, 'products');
+                $images = $this->productImagesService->editImages($request->file('images'), $product, 'products');
                 if ($images && count($images) > 0) {
                     $product->update(['image' => $images[0]->image]);
                 }

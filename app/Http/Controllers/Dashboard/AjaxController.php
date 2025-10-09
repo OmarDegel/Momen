@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Models\City;
 use App\Models\Page;
-use App\Models\Review;
 use App\Models\Size;
+use App\Models\User;
 use App\Models\Brand;
 use App\Models\Region;
+use App\Models\Review;
 use App\Models\Contact;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Category;
 use App\Traits\ToggleTrait;
@@ -96,5 +98,15 @@ class AjaxController extends Controller
     {
         $review = Review::withTrashed()->findOrFail($id);
         return $this->active($review);
+    }
+    public function userActive($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        return $this->active($user);
+    }
+    public function paymentActive($id)
+    {
+        $payment = Payment::withTrashed()->findOrFail($id);
+        return $this->active($payment);
     }
 }

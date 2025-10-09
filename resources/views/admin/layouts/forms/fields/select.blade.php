@@ -1,7 +1,7 @@
 @php
 $field_name = $select_name ?? 'active';
 $array_control = [
-    'class' => 'form-control select2',
+    'class' => 'form-select form-control',
     'style' => 'width: 100%',
     'data-parsley-trigger' => 'select'
 ];
@@ -14,7 +14,14 @@ if (isset($is_multiple)) {
     $array_control['multiple'] = '';
     $field_name .= '[]';
 }
-if (isset($select_id)) $array_control['id'] = $select_id;
+if(isset($select2)) $array_control['class'] .= ' select2';
+
+// لو معرفش select_id نعمله id فريد
+if (!isset($select_id)) {
+    $array_control['id'] = $field_name . '_' . uniqid();
+} else {
+    $array_control['id'] = $select_id;
+}
 @endphp
 
 @include('admin.layouts.forms.fields.form-group-head', ['field_name' => $field_name])

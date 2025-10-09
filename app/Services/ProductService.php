@@ -3,11 +3,16 @@
 namespace App\Services;
 
 use Illuminate\Support\Arr;
+use App\Services\ProductImagesService;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductService
 {
-    
+    protected $imagesService;
+    public function __construct(ProductImagesService $imagesService)
+    {
+        $this->imagesService = $imagesService;
+    }
 
 
     public function handleProductChildren($request, $product)
@@ -23,7 +28,7 @@ class ProductService
             'created_at',
             'updated_at',
             'deleted_at',
-            'colors',
+            'color_id',
             'children',
             'images',
         ]);
@@ -31,18 +36,20 @@ class ProductService
         Model::withoutEvents(function () use ($parentAttributes, $product, $request) {
             $receivedIds = [];
 
-            foreach ($request->children as $childData) {
-                $data = array_merge($parentAttributes, Arr::except($childData, ['id', 'colors']));
+            foreach ($request->children as $index => $childData) {
+                $data = array_merge($parentAttributes, Arr::except($childData, ['id']));
                 $data['parent_id'] = $product->id;
+
+                $childImages = $request->file("children.$index.images") ?? [];
 
                 if (isset($childData['id'])) {
                     $child = $product->children()->find($childData['id']);
                     if ($child) {
                         $child->update($data);
                         $receivedIds[] = $child->id;
-
-                        if (isset($childData['colors']) && is_array($childData['colors'])) {
-                            $child->colors()->sync($childData['colors']);
+                        if (!empty($childImages)) {
+                            $this->imagesService->deleteImage($child->id);
+                            $this->imagesService->uploadImage('products', $childImages, $child->id);
                         }
                     }
                 } else {
@@ -50,8 +57,8 @@ class ProductService
                         $newChild = $product->children()->create($data);
                         $receivedIds[] = $newChild->id;
 
-                        if (isset($childData['colors']) && is_array($childData['colors'])) {
-                            $newChild->colors()->sync($childData['colors']);
+                        if (!empty($childImages)) {
+                            $this->imagesService->uploadImage('products', $childImages, $newChild->id);
                         }
                     }
                 }
@@ -60,5 +67,4 @@ class ProductService
             $product->children()->whereNotIn('id', $receivedIds)->delete();
         });
     }
-
 }

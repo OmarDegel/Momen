@@ -124,14 +124,30 @@
             </a>
         </li>
         @endif
-        {{-- @if (auth()->user()->hasPermission('pages.index'))
+        @if (auth()->user()->hasPermission('pages.index'))
         <li class="menu-item @if ($class == 'pages') active @endif">
             <a href="{{ route('dashboard.pages.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-smart-home"></i>
                 <div>{{ __('site.pages') }}</div>
             </a>
         </li>
-        @endif --}}
+        @endif
+        @if (auth()->user()->hasPermission('users.index'))
+        <li class="menu-item @if ($class == 'users') active @endif">
+            <a href="{{ route('dashboard.users.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div>{{ __('site.users') }}</div>
+            </a>
+        </li>
+        @endif
+        @if (auth()->user()->hasPermission('payments.index'))
+        <li class="menu-item @if ($class == 'payments') active @endif">
+            <a href="{{ route('dashboard.payments.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div>{{ __('site.payments') }}</div>
+            </a>
+        </li>
+        @endif
 
 
         {{-- <li class="menu-item ">

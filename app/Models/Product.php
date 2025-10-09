@@ -10,9 +10,8 @@ class Product extends MainModel
     use ProductScope;
     protected $searchable = [
         'name',
-        'description',
+        'content',
         'code',
-        'price'
     ];
     protected $fillable = [
         'user_id', // no
@@ -20,17 +19,17 @@ class Product extends MainModel
         'brand_id', //yes
         'size_id',  //yes
         'parent_id',    //yes
+        'color_id', // yes
         'name', //yes
-        'link', //no
+        'link', //no =>for website
         'code', //yes
         'type', // no idk
         'status', // no
-        'image', //no
+        'image', //no => main
         'background', //no
-        'color', // no
         'video', //no
         'content', //yes
-        'max_amount',
+        'max_amount', //no
         'max_addition', //no
         'max_addition_free', //no
         'offer_type', //no
@@ -39,22 +38,22 @@ class Product extends MainModel
         'offer_amount_add', //no
         'offer_percent', //no
         'price', //yes
-        'price_start', //no
-        'price_end', //no
-        'start', //yes
-        'skip', //yes
+        'price_start', //no observer
+        'price_end', //no observer
+        'start', //yes =>no
+        'skip', //yes =>no
         'rate_count', //no
         'rate_all', //no
         'rate', //no
-        'order_limit', //no
+        'order_limit', //no =>use
         'order_max', //yes
-        'date_start', //yes
-        'date_expire', //yes
+        'date_start', //yes =>no
+        'date_expire', //yes =>no
         'day_start', //no
         'day_expire', //no
         'prepare_time', //no
         'order_id', //yes
-        'is_late', //yes
+        'is_late', //yes =>dis
         'is_size', //no
         'is_color', //no
         'is_max', //no

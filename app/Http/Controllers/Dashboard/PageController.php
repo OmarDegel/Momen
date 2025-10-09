@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Dashboard\PageRequest;
 use App\Models\Page;
-use App\Services\ImageHandlerService;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Services\ImageHandlerService;
+use App\Http\Requests\Dashboard\PageRequest;
 
 class PageController extends MainController
 {
@@ -23,7 +24,8 @@ class PageController extends MainController
     public function index()
     {
         $pages = Page::filter(request())->paginate($this->perPage);
-        return view('admin.pages.index', compact('pages'));
+        $products = Product::where('parent_id', null)->select('id', 'name')->get()->mapWithKeys(fn($product) => [$product->id => $product->nameLang()])->toArray();
+        return view('admin.pages.index', compact('pages', 'products'));
     }
 
     /**
@@ -31,7 +33,8 @@ class PageController extends MainController
      */
     public function create()
     {
-        return view('admin.pages.create');
+        $products = Product::where('parent_id', null)->select('id', 'name')->get()->mapWithKeys(fn($product) => [$product->id => $product->nameLang()])->toArray();
+        return view('admin.pages.create', compact('products'));
     }
 
     /**
@@ -39,9 +42,12 @@ class PageController extends MainController
      */
     public function store(PageRequest $request)
     {
+        $data = $request->except('image');
         $imageUrl = $this->imageService->uploadImage('pages', $request, 800, 600);
-        $request['image'] = $imageUrl['image'] ?? null;
-        Page::create($request->all());
+        $data['image'] = $imageUrl['image'] ?? null;
+
+        Page::create($data);
+        
         return redirect()->route('dashboard.pages.index')->with('success', __('site.added_successfully'));
     }
 
@@ -51,7 +57,9 @@ class PageController extends MainController
     public function show(string $id)
     {
         $page = Page::findOrFail($id);
-        return view('admin.pages.edit', compact('page'));
+        $products = Product::where('parent_id', null)->select('id', 'name')->get()->mapWithKeys(fn($product) => [$product->id => $product->nameLang()])->toArray();
+
+        return view('admin.pages.edit', compact('page', 'products'));
     }
 
     /**
@@ -60,7 +68,9 @@ class PageController extends MainController
     public function edit(string $id)
     {
         $page = Page::findOrFail($id);
-        return view('admin.pages.edit', compact('page'));
+        $products = Product::where('parent_id', null)->select('id', 'name')->get()->mapWithKeys(fn($product) => [$product->id => $product->nameLang()])->toArray();
+
+        return view('admin.pages.edit', compact('page', 'products'));
     }
 
     /**
@@ -69,9 +79,10 @@ class PageController extends MainController
     public function update(PageRequest $request, string $id)
     {
         $page = Page::findOrFail($id);
+        $data=$request->except('image');
         $imageUrl = $this->imageService->editImage($request, $page, 'pages');
-        $request['image'] = $imageUrl['image'] ?? null;
-        $page->update($request->all());
+        $data['image'] = $imageUrl['image'] ?? $page->image;
+        $page->update($data);
         return redirect()->route('dashboard.pages.index')->with('success', __('site.updated_successfully'));
     }
 

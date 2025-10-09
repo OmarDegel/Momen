@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Page extends MainModel
 {
-    
+    protected $searchable = [
+        'name',
+        'link',
+        'title',
+        'content',
+    ];
     protected $fillable = [
         'user_id',
         'product_id',
@@ -43,5 +48,17 @@ class Page extends MainModel
     public function children()
     {
         return $this->hasMany(Page::class, 'parent_id');
+    }
+    public function scopeFilter($query, $request = null)
+    {
+        $request = $request ?? request();
+        $filters = $request->only(['active', 'feature', 'type', 'page_type']);
+        $query->orderBy('order_id', 'asc')
+            ->mainSearch($request->input('search'))
+            ->mainApplyDynamicFilters($filters)
+            ->sort($request)
+            ->trash($request)
+            ->shipping($request);
+        return $query;
     }
 }

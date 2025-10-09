@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Dashboard\AjaxController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\UserController;
 
 Route::get('login', [AuthController::class, 'viewLogin'])->name('login.view')->withoutMiddleware(['admin', 'check.permission']);
 Route::post('login', [AuthController::class, 'login'])->name('login.login')->withoutMiddleware(['admin', 'check.permission']);
@@ -57,6 +59,10 @@ Route::resource('pages', PageController::class);
 Route::delete('pages/forceDelete/{page}', [PageController::class, 'forceDelete'])->name('pages.forceDelete');
 Route::get('pages/restore/{page}', [PageController::class, 'restore'])->name('pages.restore');
 
+Route::resource('users', UserController::class);
+Route::delete('users/forceDelete/{user}', [UserController::class, 'forceDelete'])->name('users.forceDelete');
+Route::get('users/restore/{user}', [UserController::class, 'restore'])->name('users.restore');
+
 Route::resource('brands', BrandController::class);
 Route::delete('brands/forceDelete/{brand}', [BrandController::class, 'forceDelete'])->name('brands.forceDelete');
 Route::get('brands/restore/{brand}', [BrandController::class, 'restore'])->name('brands.restore');
@@ -67,6 +73,10 @@ Route::post("messages/send/{contact}", [ContactController::class, "sendMessage"]
 Route::resource('products', ProductController::class);
 
 Route::resource('settings', SettingController::class)->only('index', 'update');
+
+Route::resource('payments', PaymentController::class);
+Route::delete('payments/forceDelete/{payment}', [PaymentController::class, 'forceDelete'])->name('payments.forceDelete');
+Route::get('payments/restore/{payment}', [PaymentController::class, 'restore'])->name('payments.restore');
 
 Route::resource("reviews", ReviewController::class);
 Route::delete('reviews/forceDelete/{review}', [ReviewController::class, 'forceDelete'])->name('reviews.forceDelete');
@@ -82,6 +92,8 @@ Route::get('pages/active/{page}', [AjaxController::class, 'pageActive'])->name('
 Route::get('reviews/active/{review}', [AjaxController::class, 'reviewActive'])->name('reviews.active');
 Route::get('brands/active/{brand}', [AjaxController::class, 'brandActive'])->name('brands.active');
 Route::get('contacts/active/{contact}', [AjaxController::class, 'contactActive'])->name('contacts.active');
+Route::get('payments/active/{payment}', [AjaxController::class, 'paymentActive'])->name('payments.active');
+Route::get('users/active/{user}', [AjaxController::class, 'userActive'])->name('users.active');
 Route::get('contacts/seen/{contact}', [AjaxController::class, 'seen'])->name('contacts.seen');
 
 Route::get('products/active/{product}', [AjaxController::class, 'productActive'])->name('products.active');

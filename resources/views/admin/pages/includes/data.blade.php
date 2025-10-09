@@ -1,5 +1,6 @@
 <tr>
     <td class="text-lg-center">{{ $page->nameLang() }}</td>
+    <td class="text-lg-center">{{ $page->page_type }}</td>
     <td class="text-lg-center">{{ $page->order_id?? 0 }}</td>
     {{-- image --}}
     <td class="text-lg-center">

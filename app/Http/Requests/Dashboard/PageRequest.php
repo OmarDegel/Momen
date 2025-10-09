@@ -27,15 +27,17 @@ class PageRequest extends FormRequest
             "link" => "nullable|string|max:50",
             "active" => "required|boolean",
             "feature" => "required|boolean",
+            "page_type" => "required|string|max:50",
             "type" => "required|string|max:50",
-            "image" => "nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048",
+            "image" => "required|image|mimes:jpg,jpeg,png,gif,webp",
             "content.ar" => "nullable|string|max:1000",
             "content.en" => "nullable|string|max:1000",
-            "title.ar" => "nullable|string|max:100",
-            "title.en" => "nullable|string|max:100",
+            "title.ar" => "required|string|max:100",
+            "title.en" => "required|string|max:100",
             "video" => "nullable|string|max:100",
             "order_id" => "required|integer|min:0",
             "parent_id" => "nullable|exists:pages,id",
+            "product_id" => "nullable|integer|min:0,exists:products",
         ];
     }
     public function messages(): array
@@ -71,7 +73,21 @@ class PageRequest extends FormRequest
             "video.string" => __("validation.string", ["attribute" => "video"]),
             "video.max" => __("validation.max.string", ["attribute" => "video", "max" => 100]),
             "parent_id.exists" => __("validation.exists", ["attribute" => "parent_id"]),
-
+            "product_id.exists" => __("validation.exists", ["attribute" => "product_id"]),
+            'page_type.required' => __("validation.required", ["attribute" => __("site.page_type")]),
+            'page_type.string' => __("validation.string", ["attribute" => __("site.page_type")]),
+            'page_type.max' => __("validation.max.string", ["attribute" => __("site.page_type"), "max" => 50]),
+            'type.required' => __("validation.required", ["attribute" => __("site.type")]),
+            'type.string' => __("validation.string", ["attribute" => __("site.type")]),
+            'type.max' => __("validation.max.string", ["attribute" => __("site.type"), "max" => 50]),
         ];
+    }
+    protected function prepareForValidation()
+    {
+        if ($this->product_id === 'null') {
+            $this->merge([
+                'product_id' => null,
+            ]);
+        }
     }
 }

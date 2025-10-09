@@ -45,3 +45,12 @@
        
     </div>
 </div>
+<div class="col-md-6">
+     @include('admin.layouts.forms.fields.text', [
+            'text_name' => 'link',
+            'text_value' =>  $product->link ?? null,
+            'label_name' => __('site.link'),
+            'label_req' => true,
+    ])
+   
+</div>

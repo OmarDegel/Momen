@@ -37,9 +37,9 @@ class BrandController extends MainController
     public function store(BrandRequest $request)
     {
         $imageUrl = $this->imageService->uploadImage('brands', $request, 800, 600);
-
-        $data = $request->except('image');
+        $data = $request->validated();
         $data['image'] = $imageUrl['image'] ?? null;
+
         Brand::create($data);
         return redirect()->route('dashboard.brands.index')->with('success', __('site.added_successfully'));
     }
@@ -47,30 +47,27 @@ class BrandController extends MainController
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Brand $brand)
     {
-        $brand = Brand::findOrFail($id);
         return view('admin.brands.edit', compact('brand'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Brand $brand)
     {
-        $brand = Brand::findOrFail($id);
         return view('admin.brands.edit', compact('brand'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(BrandRequest $request, string $id)
+    public function update(BrandRequest $request, Brand $brand)
     {
-        $brand = Brand::findOrFail($id);
-        $imageUrl = $this->imageService->editImage($request, $brand, 'categories');
-        $data = $request->except('image');
-        $data['image'] = $imageUrl['image'] ?? $brand->image;
+        $imageUrl = $this->imageService->editImage($request, $brand, 'brands');
+        $data = $request->validated();
+        $data['image'] = $imageUrl['image'] ?? $brand->image ?? null;
         $brand->update($data);
         return redirect()->route('dashboard.brands.index')->with('success', __('site.updated_successfully'));
     }

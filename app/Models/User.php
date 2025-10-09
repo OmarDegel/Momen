@@ -3,22 +3,26 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Scopes\GlobaleScope;
 use Laratrust\Contracts\LaratrustUser;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements LaratrustUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRolesAndPermissions;
+    use HasFactory, Notifiable, HasRolesAndPermissions, GlobaleScope,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+    protected $searchable = ['name_first', 'name_last', 'username', 'name'];
     protected $fillable = [
         'name',
         'username',
@@ -92,5 +96,16 @@ class User extends Authenticatable implements LaratrustUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function scopeFilter($query, $request = null)
+    {
+        $request = $request ?? request();
+        $filters = $request->only(['active', 'role_id', 'type','email','phone']);
+        $query
+            ->mainSearch($request->input('search'))
+            ->mainApplyDynamicFilters($filters)
+            ->sort($request)
+            ->trash($request);
+        return $query;
     }
 }

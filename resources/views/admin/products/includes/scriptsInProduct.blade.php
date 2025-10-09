@@ -16,6 +16,7 @@
 'inputName' => 'images',
 'existingImages' => isset($product) && $product->images ? $product->images : [],
 ])
+
 <script>
     $(document).ready(function() {
             $("#is_shipping_free").change(function() {
@@ -32,7 +33,5 @@
 
 
 @section('mainFiles')
-@include('admin.products.includes.date_scriptsjs')
 @include('admin.products.includes.repeater_scriptjs')
-@include('admin.products.includes.getCategoryBySevice')
 @endsection

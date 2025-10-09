@@ -2,10 +2,11 @@
     'TitleTable' => __('site.pages'),
     'routeToCreate' => route('dashboard.pages.create'),
     "model" => "pages",
+    'filter' => true
 ])
 
 @include('admin.layouts.table.thead_info', [
-    'columns' => ['site.name', 'site.title', 'site.image', 'site.status', 'site.action'],
+    'columns' => ['site.name', 'site.type','site.order', 'site.image', 'site.status', 'site.action'],
 ])
 
 <tbody class="table-border-bottom-0">
