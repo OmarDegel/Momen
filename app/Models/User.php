@@ -6,16 +6,37 @@ namespace App\Models;
 
 use App\Scopes\GlobaleScope;
 use Laratrust\Contracts\LaratrustUser;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\HasRolesAndPermissions;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements LaratrustUser
+class User extends Authenticatable implements LaratrustUser, JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRolesAndPermissions, GlobaleScope,SoftDeletes;
+    use HasFactory, Notifiable, HasRolesAndPermissions, GlobaleScope, SoftDeletes;
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -100,12 +121,16 @@ class User extends Authenticatable implements LaratrustUser
     public function scopeFilter($query, $request = null)
     {
         $request = $request ?? request();
-        $filters = $request->only(['active', 'role_id', 'type','email','phone']);
+        $filters = $request->only(['active', 'role_id', 'type', 'email', 'phone']);
         $query
             ->mainSearch($request->input('search'))
             ->mainApplyDynamicFilters($filters)
             ->sort($request)
             ->trash($request);
         return $query;
+    }
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
     }
 }
