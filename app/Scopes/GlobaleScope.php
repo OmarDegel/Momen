@@ -83,4 +83,8 @@ trait GlobaleScope
         }
         return $query;
     }
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
+    }
 }

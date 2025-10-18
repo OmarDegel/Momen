@@ -36,36 +36,35 @@ class MainModel extends Model
 
     public function nameLang($locale = null)
     {
-        $data = $this->name;
+        $data = (array) $this->name;
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();
-            return $data[$userLang];
+            return $data[$userLang] ?? null;
         }
         return $data[$locale] ?? null;
     }
 
     public function contentLang($locale = null)
     {
-        $data = $this->content;
+        $data = (array) $this->content;
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();
-            return $data[$userLang];
+            return $data[$userLang] ?? null;
         }
         return $data[$locale] ?? null;
     }
     public function titleLang($locale = null)
     {
-        $data = $this->title;
+        $data = (array) $this->title;
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();
-            return $data[$userLang];
+            return $data[$userLang] ?? null;
         }
         return $data[$locale] ?? null;
     }
-
 
 
 

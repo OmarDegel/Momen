@@ -69,6 +69,11 @@ class Product extends MainModel
         'feature', //yes
         'active', //yes
     ];
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function brand()
     {
         return $this->belongsTo(Brand::class);
@@ -81,9 +86,9 @@ class Product extends MainModel
     {
         return $this->belongsTo(Size::class);
     }
-    public function colors()
+    public function color()
     {
-        return $this->belongsToMany(Color::class, 'color_product', 'product_id', 'color_id');
+        return $this->belongsTo(Color::class);
     }
     public function parent()
     {
@@ -117,5 +122,32 @@ class Product extends MainModel
 
             $this->children()->delete();
         }
+    }
+    public function checkProductInCart()
+    {
+        $user = auth()->guard('api')->user();
+        if (!$user) {
+            return false;
+        }
+        return $user->cartItems()->where('product_id', $this->id)->exists();
+    }
+    public function productIdInCart()
+    {
+        $user = auth()->guard('api')->user();
+        if (!$user) {
+            return null;
+        }
+        $item = $user->cartItems()->where('product_id', $this->id)->first();
+        return $item ? $item->id : null;
+    }
+    public function countInCart()
+    {
+        $user = auth()->guard('api')->user();
+        if (!$user) {
+            return 0;
+        }
+
+        $item = $user->cartItems()->where('product_id', $this->id)->first();
+        return $item ? $item->quantity : 0;
     }
 }

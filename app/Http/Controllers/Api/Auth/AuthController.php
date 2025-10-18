@@ -25,9 +25,9 @@ class AuthController extends MainController
         if ($validator->fails()) {
             return $this->sendError('error', $validator->errors(), 403);
         }
+        $otp = (new Otp())->generate($request->email, 'numeric', 4, 10);
         Notification::route('mail', $request->email)
-            ->notify(new SendOtpNotification($request->email, 'verify'));
-
+            ->notify((new SendOtpNotification($request->email, 'verify', $otp->token)));
         return $this->messageSuccess(__('auth.send_code_successfully'));
     }
 

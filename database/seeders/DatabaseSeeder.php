@@ -33,16 +33,16 @@ class DatabaseSeeder extends Seeder
                 
             ]
         );
-        $user = User::create([
-            'name_first' => 'omar',
-            'name_last' => 'samy',
-            'email' => 'osamy8088@gmail.com',
-            'password' => '12345678',
-            'phone' => '01019631989',
-            'locale' => 'en',
-            'theme' => 'light',
-            'type' => 'admin'
-        ]);
-        $user->addRole('super_admin');
+        // $user = User::create([
+        //     'name_first' => 'omar',
+        //     'name_last' => 'samy',
+        //     'email' => 'osamy8088@gmail.com',
+        //     'password' => '12345678',
+        //     'phone' => '01019631989',
+        //     'locale' => 'en',
+        //     'theme' => 'light',
+        //     'type' => 'admin'
+        // ]);
+        // $user->addRole('super_admin');
     }
 }

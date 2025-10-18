@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('image')->nullable();
+            $table->tinyInteger('order_id')->default(1);
+            $table->tinyInteger('active')->default(1);
             $table->timestamps();
         });
     }

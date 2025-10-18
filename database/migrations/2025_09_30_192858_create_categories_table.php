@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-             $table->foreignId('user_id')
+            $table->foreignId('user_id')
                 ->nullable()
                 ->constrained()
-                ->nullOnDelete(); 
+                ->nullOnDelete();
 
             $table->text('name')->nullable();
             $table->string('link', 50)->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->unsignedBigInteger('parent_id')->nullable(); 
+            $table->unsignedBigInteger('parent_id')->nullable();
 
             $table->string('type', 50)->nullable();
             $table->string('status', 50)->nullable();

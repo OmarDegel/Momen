@@ -17,8 +17,7 @@ class SiteOpenMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $site_open = Setting::where('key', 'site_open')->first();
-
-        if ($site_open->value == 1) {
+        if ($site_open->value == 'yes') {
             return $next($request);
         } else {
             return response()->json([

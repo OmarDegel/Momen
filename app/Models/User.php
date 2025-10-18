@@ -133,4 +133,8 @@ class User extends Authenticatable implements LaratrustUser, JWTSubject
     {
         return $this->hasMany(Device::class);
     }
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
 }
