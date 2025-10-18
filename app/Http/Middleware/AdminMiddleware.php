@@ -17,7 +17,6 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $auth = auth()->user();
-
         if ($auth && $auth->type == 'admin'  && $auth->active) {
             config(['activitylog.enabled' => true]);
 
@@ -27,6 +26,7 @@ class AdminMiddleware
                 'admin_dir' => $auth->locale == 'ar' ? 'rtl' : 'ltr',
                 'admin_theme_style' => $auth->theme,
             ]);
+
             return $next($request);
         } else {
             auth()->logout();

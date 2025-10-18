@@ -42,35 +42,21 @@ class Category extends MainModel
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
-    public function activeChildren()
-    {
-        return $this->children()->where('active', 1);
-    }
-    public function scopeActive($query)
+        public function scopeActive($query)
     {
         return $query->where('active', 1)
             ->whereDoesntHave('children')
             ->orderBy('order_id', 'asc');
     }
-    public function scopeFilter($query, $request = null, $type = null)
+    public function scopeFilter($query, $request = null)
     {
         $request = $request ?? request();
-
-        if ($type == 'admin') {
-            $filters = $request->only(['active', 'parent_id', 'user_id']);
-
-            return $query->orderBy('order_id', 'asc')
-                ->mainSearch($request->input('search'))
-                ->mainApplyDynamicFilters($filters)
-                ->sort($request)
-                ->trash($request);
-        }
-
-        $filters = $request->only(['parent_id']);
-        return $query->where('active', 1)
-            ->orderBy('order_id', 'asc')
-            ->mainSearch($request->input('search'))
-            ->mainApplyDynamicFilters($filters)
-            ->sort($request);
+        $filters = $request->only([ 'active','parent_id']);
+        $query->orderBy('order_id', 'asc')
+        ->mainSearch($request->input('search'))
+        ->mainApplyDynamicFilters($filters)
+        ->sort($request)
+        ->trash($request);
+        return $query;
     }
 }

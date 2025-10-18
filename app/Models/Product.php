@@ -69,11 +69,6 @@ class Product extends MainModel
         'feature', //yes
         'active', //yes
     ];
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
-
     public function brand()
     {
         return $this->belongsTo(Brand::class);
@@ -86,9 +81,9 @@ class Product extends MainModel
     {
         return $this->belongsTo(Size::class);
     }
-    public function color()
+    public function colors()
     {
-        return $this->belongsTo(Color::class);
+        return $this->belongsToMany(Color::class, 'color_product', 'product_id', 'color_id');
     }
     public function parent()
     {
@@ -115,6 +110,9 @@ class Product extends MainModel
     {
         $this->attributes['date_end'] = date('Y-m-d H:i:00', strtotime($value));
     }
+    public function favorites(){
+        return $this->hasMany(Favorite::class);
+    }
 
     public function deleteChildrenOldWhenNotSendInUpdate()
     {
@@ -122,32 +120,5 @@ class Product extends MainModel
 
             $this->children()->delete();
         }
-    }
-    public function checkProductInCart()
-    {
-        $user = auth()->guard('api')->user();
-        if (!$user) {
-            return false;
-        }
-        return $user->cartItems()->where('product_id', $this->id)->exists();
-    }
-    public function productIdInCart()
-    {
-        $user = auth()->guard('api')->user();
-        if (!$user) {
-            return null;
-        }
-        $item = $user->cartItems()->where('product_id', $this->id)->first();
-        return $item ? $item->id : null;
-    }
-    public function countInCart()
-    {
-        $user = auth()->guard('api')->user();
-        if (!$user) {
-            return 0;
-        }
-
-        $item = $user->cartItems()->where('product_id', $this->id)->first();
-        return $item ? $item->quantity : 0;
     }
 }

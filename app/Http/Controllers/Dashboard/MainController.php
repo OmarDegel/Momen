@@ -17,7 +17,6 @@ class MainController extends Controller
 
     public function __construct()
     {
-        $this->setSettingsInView();
 
         $this->perPage = request()->get('per_page', $this->result);
         if ($this->perPage > 250) {
@@ -30,14 +29,5 @@ class MainController extends Controller
     {
         $this->class = $class;
         View::share('class', $class);
-    }
-    protected function setSettingsInView()
-    {
-        if (!session()->has('site_title')) {
-            session()->put('site_title', Setting::where('key', 'site_title')->value('value'));
-        }
-
-        $site_title = session('site_title');
-        View::share('site_title', $site_title);
     }
 }

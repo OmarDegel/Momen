@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Dashboard\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Dashboard\AjaxController;
@@ -10,15 +9,23 @@ use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\PageController;
 use App\Http\Controllers\Dashboard\RoleController;
 use App\Http\Controllers\Dashboard\SizeController;
+use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\BrandController;
+use App\Http\Controllers\Dashboard\ColorController;
+use App\Http\Controllers\Dashboard\OrderController;
+use App\Http\Controllers\Dashboard\CouponController;
 use App\Http\Controllers\Dashboard\RegionController;
 use App\Http\Controllers\Dashboard\ReviewController;
+use App\Http\Controllers\Dashboard\AddressController;
 use App\Http\Controllers\Dashboard\ContactController;
+use App\Http\Controllers\Dashboard\PaymentController;
 use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\CategoryController;
-use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Dashboard\FavoriteController;
+use App\Http\Controllers\Dashboard\DeliveryTimeController;
+use App\Http\Controllers\Dashboard\NotificationController;
 
 Route::get('login', [AuthController::class, 'viewLogin'])->name('login.view')->withoutMiddleware(['admin', 'check.permission']);
 Route::post('login', [AuthController::class, 'login'])->name('login.login')->withoutMiddleware(['admin', 'check.permission']);
@@ -38,7 +45,9 @@ Route::group(['prefix' => 'profile'], function () {
     Route::get('change_theme/{theme}', [ProfileController::class, 'changeTheme'])->name('profile.change.theme');
     Route::get('delete_account', [ProfileController::class, 'deleteAccount'])->name('profile.delete.account');
 });
-
+Route::fallback(function () {
+    return view('admin.404');
+});
 Route::resource('categories', CategoryController::class);
 Route::delete('categories/forceDelete/{category}', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
 Route::get('categories/restore/{category}', [CategoryController::class, 'restore'])->name('categories.restore');
@@ -84,6 +93,27 @@ Route::get('reviews/restore/{review}', [ReviewController::class, 'restore'])->na
 
 Route::resource('activity_logs', ActivityLogController::class);
 
+Route::get("favorites", [FavoriteController::class, "index"])->name("favorites.index");
+
+Route::resource("coupons", CouponController::class);
+Route::delete('coupons/forceDelete/{coupon}', [CouponController::class, 'forceDelete'])->name('coupons.forceDelete');
+Route::get('coupons/restore/{coupon}', [CouponController::class, 'restore'])->name('coupons.restore');
+
+Route::resource("colors", ColorController::class);
+
+Route::resource("delivery_times", DeliveryTimeController::class);
+Route::delete('delivery_times/forceDelete/{delivery_time}', [DeliveryTimeController::class, 'forceDelete'])->name('delivery_times.forceDelete');
+Route::get('delivery_times/restore/{delivery_time}', [DeliveryTimeController::class, 'restore'])->name('delivery_times.restore');
+
+Route::resource("addresses", AddressController::class);
+Route::delete('addresses/forceDelete/{address}', [AddressController::class, 'forceDelete'])->name('addresses.forceDelete');
+Route::get('addresses/restore/{address}', [AddressController::class, 'restore'])->name('addresses.restore');
+
+Route::resource("orders", OrderController::class)->only('index', 'show');
+
+Route::resource('notifications', NotificationController::class)->only(['index', 'create', 'store', 'show']);
+Route::get('notifications/mark_as_read/{id}', [NotificationController::class, 'markAsRead']);
+
 Route::get('categories/active/{category}', [AjaxController::class, 'categoryActive'])->name('categories.active');
 Route::get('sizes/active/{size}', [AjaxController::class, 'sizeActive'])->name('sizes.active');
 Route::get('cities/active/{city}', [AjaxController::class, 'cityActive'])->name('cities.active');
@@ -94,9 +124,15 @@ Route::get('brands/active/{brand}', [AjaxController::class, 'brandActive'])->nam
 Route::get('contacts/active/{contact}', [AjaxController::class, 'contactActive'])->name('contacts.active');
 Route::get('payments/active/{payment}', [AjaxController::class, 'paymentActive'])->name('payments.active');
 Route::get('users/active/{user}', [AjaxController::class, 'userActive'])->name('users.active');
+Route::get('colors/active/{color}', [AjaxController::class, 'colorActive'])->name('colors.active');
+
 Route::get('contacts/seen/{contact}', [AjaxController::class, 'seen'])->name('contacts.seen');
 
 Route::get('products/active/{product}', [AjaxController::class, 'productActive'])->name('products.active');
 
+Route::get('coupons/active/{coupon}', [AjaxController::class, 'couponActive'])->name('coupons.active');
+Route::get('delivery_times/active/{delivery_time}', [AjaxController::class, 'deliveryTimeActive'])->name('delivery_times.active');
+
 Route::get('products/feature/{product}', [AjaxController::class, 'feature'])->name('products.feature');
-Route::get('products/returned/{product}', [AjaxController::class, 'returned'])->name('products.returned');
+Route::get('products/returned/{product}', [AjaxController::class, 'returned'])->name('products.is_returned');
+Route::get('orders/change_status/{order}', [AjaxController::class, 'changeStatus'])->name('orders.change_status');

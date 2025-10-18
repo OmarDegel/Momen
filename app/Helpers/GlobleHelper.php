@@ -88,3 +88,14 @@ if (! function_exists('setting')) {
         return Setting::where('key', $key)->value('value') ?? $default;
     }
 }
+if(! function_exists('deliveryTimeType')) {
+    function deliveryTimeType()
+    {
+        return [
+            'morning' => __('site.morning'),
+            'evening' => __('site.evening'),
+            "afternoon" => __('site.afternoon'),
+            "night" => __('site.night'),
+        ];
+    }
+}

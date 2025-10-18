@@ -22,7 +22,7 @@ class ReviewController extends MainController
     }
     public function index()
     {
-        $reviews = Review::filter(request())->paginate($this->perPage);
+        $reviews = Review::with('user', 'reviewable')->filter(request())->paginate($this->perPage);
         $users = User::select('id', 'name_first', 'name_last')->get()
             ->mapWithKeys(fn($user) => [$user->id => $user->name_first . ' ' . $user->name_last])
             ->toArray();

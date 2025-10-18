@@ -5,44 +5,26 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Scopes\GlobaleScope;
+use Spatie\Activitylog\LogOptions;
+use App\Traits\HasDefaultLogOptions;
 use Laratrust\Contracts\LaratrustUser;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements LaratrustUser, JWTSubject
+class User extends Authenticatable implements LaratrustUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRolesAndPermissions, GlobaleScope, SoftDeletes;
-
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
+    use HasFactory, Notifiable, HasRolesAndPermissions, GlobaleScope, SoftDeletes, HasDefaultLogOptions;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+
     protected $searchable = ['name_first', 'name_last', 'username', 'name'];
     protected $fillable = [
         'name',
@@ -128,13 +110,5 @@ class User extends Authenticatable implements LaratrustUser, JWTSubject
             ->sort($request)
             ->trash($request);
         return $query;
-    }
-    public function devices()
-    {
-        return $this->hasMany(Device::class);
-    }
-    public function cart()
-    {
-        return $this->hasOne(Cart::class);
     }
 }

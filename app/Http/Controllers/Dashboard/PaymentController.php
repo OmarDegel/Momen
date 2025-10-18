@@ -41,7 +41,7 @@ class PaymentController extends MainController
     {
         $imageUrl = $this->imageService->uploadImage('payments', $request);
         $data = $request->except('image');
-        $data['image'] = $imageUrl['image'];
+        $data['image'] = $imageUrl['image']??null;
         Payment::create($data);
         return redirect()->route('dashboard.payments.index')->with('success', __('site.payment_created_successfully'));
     }

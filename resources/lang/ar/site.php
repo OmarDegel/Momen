@@ -648,5 +648,15 @@ return [
     'desktop' => 'سطح المكتب',
     'mobile' => 'جوال',
     'trash_buckets' => 'سلة المهملات',
+    'created_data'=>"البيانات المضافة",
+    'field'=>'الحقل',
+    'value'=>'القيمة',
+    'old_value'=>'القيمة القديمة',
+    'new_value'=>'القيمة الجديدة',
+    'log_name'=>'اسم السجل',
+    "event" => "الحدث",
+    'causer'=>'المستخدم',
+    'favorites'=>'المفضلة',
+    'favorite'=>'المفضلة',
 ];
 

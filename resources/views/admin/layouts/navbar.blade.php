@@ -79,7 +79,7 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item" href="{{ route('dashboard.logout') }}" target="_blank">
+                        <a class="dropdown-item"  href="{{ route('dashboard.logout') }}" >
                             <i class="ti ti-logout me-2 ti-sm"></i>
                             <span class="align-middle">{{ __('site.logout') }}</span>
                         </a>

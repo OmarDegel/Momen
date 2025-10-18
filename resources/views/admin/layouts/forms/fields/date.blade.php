@@ -36,7 +36,7 @@ $field_name = $date_name;
 
 {!!
 html()
-->text($field_name, $date_value ?? null)
+->date($field_name, $date_value ?? null)
 ->attributes($array_control)
 !!}
 

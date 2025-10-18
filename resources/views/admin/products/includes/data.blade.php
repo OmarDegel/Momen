@@ -20,7 +20,7 @@
         'model' => 'products',
         'item' => $product,
         'param' => 'product',
-        'function' => 'returned',
+        'function' => 'is_returned',
     ])
     {{-- status --}}
     @include('admin.layouts.tables.active', [

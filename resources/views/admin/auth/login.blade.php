@@ -13,7 +13,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Popo - {{__('site.login_page')}}</title>
+    <title>Momen - {{__('site.login_page')}}</title>
 
     <meta name="description" content="" />
 
@@ -95,11 +95,11 @@
                         fill="#7367F0" />
                     </svg>
                   </span>
-                  <span class="app-brand-text demo text-body fw-bold ms-1">Popo</span>
+                  <span class="app-brand-text demo text-body fw-bold ms-1">Momen</span>
                 </a>
               </div>
               <!-- /Logo -->
-              <h4 class="mb-1 pt-2">👋 !Popo {{__('site.welcome')}}</h4>
+              <h4 class="mb-1 pt-2">👋 !Momen {{__('site.welcome')}}</h4>
               <p class="mb-4">{{__('site.pleasesignin')}}</p>
 
               <form method="POST" action="{{ route('dashboard.login.login') }}" id="formAuthentication" class="mb-3">

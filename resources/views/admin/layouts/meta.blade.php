@@ -11,5 +11,5 @@
     @yield('title')
     @endif
     &#8211;
-    {{ __(config('app.name')) }}
+    {{ $site_title }}
 </title>

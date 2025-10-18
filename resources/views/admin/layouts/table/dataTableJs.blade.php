@@ -17,7 +17,7 @@
         var table = $('.table').DataTable({
             paging: false,
             scrollX: true,
-            scrollY: 400,
+            scrollY: 700,
             info: false,
             dom: '<"d-flex justify-content-between align-items-center mb-3 px-3"<"custom-export-area pe-3"B><"f"f>>t',
             buttons: [

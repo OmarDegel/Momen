@@ -2,22 +2,18 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\LogOptions;
+use App\Traits\HasDefaultLogOptions;
 use Laratrust\Models\Role as RoleModel;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Role extends RoleModel
 {
-    use LogsActivity;
+    use LogsActivity, HasDefaultLogOptions;
     protected static $logAttributes = ['*'];
+    
 
-
-    public function getActivitylogOptions(): \Spatie\Activitylog\LogOptions
-    {
-        return \Spatie\Activitylog\LogOptions::defaults()
-            ->logAll()
-            ->dontLogIfAttributesChangedOnly(['updated_at'])
-            ->useLogName('system');
-    }
+   
 
     public $guarded = [];
 }

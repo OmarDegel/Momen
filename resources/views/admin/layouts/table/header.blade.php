@@ -1,7 +1,7 @@
 @php
 $classOfHeaderTable= 'card-header';
 $classDivTable = 'table-responsive text-nowrap';
-$classTable='table';
+$classTable='table ';
 
 
 @endphp

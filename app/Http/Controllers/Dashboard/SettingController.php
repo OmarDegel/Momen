@@ -95,6 +95,9 @@ class SettingController extends MainController
 
             $data['logo_image'] = 'uploads/' . $filename;
         }
+        if($data['site_title']){
+            session()->put('site_title', $data['site_title']);
+        }
         foreach ($data as $key => $value) {
             Setting::where('key', $key)->update(['value' => $value]);
         }

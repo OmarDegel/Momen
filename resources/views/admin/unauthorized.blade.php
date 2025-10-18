@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Popo - {{__('site.unauthorized')}}</title>
+    <title>Momen - {{__('site.unauthorized')}}</title>
 
     <meta name="description" content="" />
 
@@ -81,7 +81,7 @@
     <script src="{{asset("admin/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js")}}"></script>
     <script src="{{asset("admin/assets/vendor/libs/hammer/hammer.js")}}"></script>
     <script src="{{asset("admin/assets/vendor/libs/i18n/i18n.js")}}"></script>
-    <script src="{{asset("admin/assets/vendor/libs/typeahead-js/typeahead.j")}}s"></script>
+    <script src="{{asset("admin/assets/vendor/libs/typeahead-js/typeahead.js")}}s"></script>
     <script src="{{asset("admin/assets/vendor/js/menu.js")}}"></script>
 
     <!-- endbuild -->

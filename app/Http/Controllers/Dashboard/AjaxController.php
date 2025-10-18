@@ -7,6 +7,8 @@ use App\Models\Page;
 use App\Models\Size;
 use App\Models\User;
 use App\Models\Brand;
+use App\Models\Order;
+use App\Models\Coupon;
 use App\Models\Region;
 use App\Models\Review;
 use App\Models\Contact;
@@ -14,7 +16,10 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Category;
 use App\Traits\ToggleTrait;
+use App\Models\DeliveryTime;
 use Illuminate\Http\Request;
+use App\Enums\StatusOrderEnum;
+use App\Helpers\StatusOrderHelper;
 use App\Http\Controllers\Controller;
 
 class AjaxController extends Controller
@@ -84,11 +89,12 @@ class AjaxController extends Controller
     }
 
     public function returned($id)
-    {
+    { 
         $product = Product::withTrashed()->findOrFail($id);
         $product->update([
             'is_returned' => ! ($product->is_returned),
         ]);
+        // dd($product->is_returned);  
         return response()->json([
             'success' => true,
             'active' => $product->is_returned,
@@ -108,5 +114,35 @@ class AjaxController extends Controller
     {
         $payment = Payment::withTrashed()->findOrFail($id);
         return $this->active($payment);
+    }
+    public function couponActive($id)
+    {
+        $coupon = Coupon::withTrashed()->findOrFail($id);
+        return $this->active($coupon);
+    }
+    public function deliveryTimeActive($id)
+    {
+        $delivery_time = DeliveryTime::withTrashed()->findOrFail($id);
+        return $this->active($delivery_time);
+    }
+    public function changeStatus(Request $request, Order $order)
+    {
+        $newStatus = StatusOrderEnum::from($request->status);
+
+        $order->status = $newStatus;
+        $order->save();
+
+
+        $availableTransitions = collect(StatusOrderHelper::getAvailableTransitions($newStatus))
+            ->mapWithKeys(fn($status) => [$status->value => $status->label()])
+            ->toArray();
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated.',
+            'transitions' => $availableTransitions,
+            'current' => $newStatus->value
+        ]);
     }
 }

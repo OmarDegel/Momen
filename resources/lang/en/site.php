@@ -629,4 +629,17 @@ return [
     'mobile' => 'Mobile',
     'trash_buckets' => 'Trash Buckets',
 
+    'created_data' => "Added data",
+    'field' => "Field",
+    'value' => "Value",
+    'old_value' => "Old value",
+    'new_value' => "New value",
+    'log_name' => "Log name",
+    'event' => "Event",
+    'causer'=>"Causer",
+    'favorite' => "Favorite",
+    'favorites' => "Favorites",
+    'favorite_added_successfully' => "Favorite added successfully",
+    'favorite_removed_successfully' => "Favorite removed successfully",
+    'favorite_toggle_successfully' => "Favorite toggle successfully",
 ];
