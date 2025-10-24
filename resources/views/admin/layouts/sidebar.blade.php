@@ -188,6 +188,14 @@
                 </a>
             </li>
         @endif
+        @if (auth()->user()->hasPermission('orderItemReturns.index'))
+            <li class="menu-item @if ($class == 'orderItemReturns') active @endif">
+                <a href="{{ route('dashboard.orderItemReturns.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                    <div>{{ __('site.orderItemReturns') }}</div>
+                </a>
+            </li>
+        @endif
         @if (auth()->user()->hasPermission('notifications.index'))
             <li class="menu-item @if ($class == 'notifications') active @endif">
                 <a href="{{ route('dashboard.notifications.index') }}" class="menu-link">

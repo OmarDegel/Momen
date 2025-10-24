@@ -15,13 +15,16 @@ use App\Models\Contact;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\OrderStatus;
 use App\Traits\ToggleTrait;
 use App\Models\DeliveryTime;
 use Illuminate\Http\Request;
 use App\Enums\StatusOrderEnum;
 use App\Helpers\StatusOrderHelper;
 use App\Http\Controllers\Controller;
-use App\Models\OrderStatus;
+use App\Enums\StatusOrderItemReturnEnum;
+use App\Helpers\StatusOrderItemsReturnHelper;
+use App\Models\OrderItemReturn;
 
 class AjaxController extends Controller
 {
@@ -134,9 +137,33 @@ class AjaxController extends Controller
 
         $order->status = $newStatus;
         $order->save();
-
+        OrderStatus::create([
+            'order_id' => $order->id,
+            'status_id' => $newStatus->value
+        ]);
 
         $availableTransitions = collect(StatusOrderHelper::getAvailableTransitions($newStatus))
+            ->mapWithKeys(fn($status) => [$status->value => $status->label()])
+            ->toArray();
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated.',
+            'transitions' => $availableTransitions,
+            'current' => $newStatus->value
+        ]);
+    }
+    public function changeItemStatus(Request $request, OrderItemReturn $item)
+    {
+        
+        $newStatus = StatusOrderItemReturnEnum::from($request->status);
+
+        $item->status = $newStatus;
+        $item->save();
+        
+        
+        $availableTransitions = collect(StatusOrderItemsReturnHelper::getAvailableTransitions($newStatus))
             ->mapWithKeys(fn($status) => [$status->value => $status->label()])
             ->toArray();
 

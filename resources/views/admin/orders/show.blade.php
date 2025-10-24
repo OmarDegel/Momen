@@ -24,7 +24,6 @@
 @endsection
 @section('jsFiles')
     <script src="{{ asset('admin/assets/vendor/libs/select2/select2.js') }}"></script>
-    
     @include('admin.layouts.table.ajaxChangeStatus', ['model' => 'orders'])
-
+    
 @endsection

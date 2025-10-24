@@ -120,7 +120,7 @@ class OrderSeeder extends Seeder
         $data['total']=$data['offer_price'] > 0  ? ($data['offer_price'] * $data['total_amount'] ): ( $data['price'] * $data['total_amount']);
         $data['total_price']=$product->price * $amount;
         $data['shipping']=$product->shipping;
-        $data['is_return']=$product->is_returned;
+        $data['is_return']=1;
         $returnPeriodDays = 14;    
         $data['return_at']=$data['is_return']==1 && isset($returnPeriodDays) ?
         now()->addDays((int) $returnPeriodDays)

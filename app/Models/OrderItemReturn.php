@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\StatusOrderItemReturnEnum;
 
 class OrderItemReturn extends MainModel
 {
@@ -35,7 +36,9 @@ class OrderItemReturn extends MainModel
         'rejected_at',
     ];
 
-
+    protected $casts=[
+        'status' => StatusOrderItemReturnEnum::class
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -60,7 +63,10 @@ class OrderItemReturn extends MainModel
     {
         return $this->belongsTo(Coupon::class);
     }
-
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by', 'id');

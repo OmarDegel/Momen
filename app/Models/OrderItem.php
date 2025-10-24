@@ -27,7 +27,7 @@ class OrderItem extends MainModel
         'return_at'
     ];
 
-   
+
 
 
     public function order()
@@ -42,7 +42,7 @@ class OrderItem extends MainModel
 
     public function productChild()
     {
-        return $this->belongsTo(Product::class, 'product_child_id','id');
+        return $this->belongsTo(Product::class, 'product_child_id', 'id');
     }
 
     public function OrderItemReturn()

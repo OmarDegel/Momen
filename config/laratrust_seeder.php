@@ -34,6 +34,7 @@ return [
             "addresses" => 'i,sh,s,u,a,d',
             "colors" => 'i,sh,s,u,a,d',
             "orders" => 'i,sh,s,u,a,d',
+            'orderItemReturns' => 'i,sh,s,u,a,d',
             'notifications' => 'i,s,sh',
 
 

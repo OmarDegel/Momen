@@ -26,6 +26,7 @@ use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\FavoriteController;
 use App\Http\Controllers\Dashboard\DeliveryTimeController;
 use App\Http\Controllers\Dashboard\NotificationController;
+use App\Http\Controllers\Dashboard\OrderItemReturnController;
 
 Route::get('login', [AuthController::class, 'viewLogin'])->name('login.view')->withoutMiddleware(['admin', 'check.permission']);
 Route::post('login', [AuthController::class, 'login'])->name('login.login')->withoutMiddleware(['admin', 'check.permission']);
@@ -111,6 +112,8 @@ Route::get('addresses/restore/{address}', [AddressController::class, 'restore'])
 
 Route::resource("orders", OrderController::class)->only('index', 'show');
 
+Route::resource('orderItemReturns', OrderItemReturnController::class)->only('index', 'show');
+
 Route::resource('notifications', NotificationController::class)->only(['index', 'create', 'store', 'show']);
 Route::get('notifications/mark_as_read/{id}', [NotificationController::class, 'markAsRead']);
 
@@ -136,3 +139,4 @@ Route::get('delivery_times/active/{delivery_time}', [AjaxController::class, 'del
 Route::get('products/feature/{product}', [AjaxController::class, 'feature'])->name('products.feature');
 Route::get('products/returned/{product}', [AjaxController::class, 'returned'])->name('products.is_returned');
     Route::post('orders/change_status/{order}', [AjaxController::class, 'changeStatus'])->name('orders.change_status');
+    Route::post('orderItemReturns/change_status/{item}', [AjaxController::class, 'changeItemStatus'])->name('order_item_returns.change_status');
