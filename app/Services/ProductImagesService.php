@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\ProductGallery;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
+class ProductImagesService
+{
+    public function uploadImage($folder = 'products', $images, $productId, $width = 800, $height = 600)
+    {
+        if (empty($images)) return null;
+
+        // لو الصور ملف واحد مش مصفوفة، نحوله لمصفوفة
+        $images = is_array($images) ? $images : [$images];
+
+        $manager = new ImageManager(new Driver());
+        $uploaded = [];
+
+        foreach ($images as $file) {
+
+
+            $image = $manager->read($file->getRealPath());
+
+            $image->resize($width, $height, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+
+            $mainPath = public_path("uploads/{$folder}/images");
+
+            if (!file_exists($mainPath)) {
+                mkdir($mainPath, 0777, true);
+            }
+
+            $imageName = uniqid() . '.webp';
+            $imagePath = "uploads/{$folder}/images/{$imageName}";
+
+            $image->toWebp(quality: 60)->save(public_path($imagePath));
+
+            $gallery = ProductGallery::create([
+                'product_id' => $productId,
+                'image' => $imagePath
+            ]);
+            $uploaded[] = $gallery;
+        }
+        return $uploaded;
+    }
+
+    public function deleteImage(int $productId): void
+    {
+        $paths = ProductGallery::where('product_id', $productId)->pluck('image')->toArray();
+        if (empty($paths)) return;
+
+        foreach ($paths as $p) {
+            $this->deleteSingleImage($p);
+        }
+        ProductGallery::where('product_id', $productId)->delete();
+    }
+
+    protected function deleteSingleImage(?string $imagePath): void
+    {
+        if ($imagePath && file_exists(public_path($imagePath))) {
+            unlink(public_path($imagePath));
+        }
+    }
+
+    public function editImages($images,  $product, $folder)
+    {
+        if (is_array($images) && count($images) > 0) {
+            $this->deleteImage($product->id);
+            return $this->uploadImage($folder, $images, $product->id, width: 800, height: 600);
+        }
+
+        return $product->galleries;
+    }
+}
