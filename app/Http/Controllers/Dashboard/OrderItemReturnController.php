@@ -12,7 +12,7 @@ class OrderItemReturnController extends MainController
     public function __construct()
     {
         parent::__construct();
-        $this->setClass('order_items_return');
+        $this->setClass('orderItemReturns');
     }
     public function index()
     {
@@ -45,7 +45,7 @@ class OrderItemReturnController extends MainController
      */
     public function show(string $id)
     {
-        $data = ['user', 'order', 'orderItem', 'reason', 'coupon', 'product'];
+        $data = ['user', 'order', 'orderItem', 'reason', 'coupon', 'product','statuses'];
         $orderItemReturn = OrderItemReturn::with($data)->findOrFail($id);
         return view('admin.orderItemReturns.show', compact('orderItemReturn'));
     }

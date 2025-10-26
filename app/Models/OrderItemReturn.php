@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\OrderItemReturnStatus;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\StatusOrderItemReturnEnum;
 
@@ -36,13 +37,13 @@ class OrderItemReturn extends MainModel
         'rejected_at',
     ];
 
-    protected $casts=[
+    protected $casts = [
         'status' => StatusOrderItemReturnEnum::class
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
-    }   
+    }
 
     public function order()
     {
@@ -76,5 +77,8 @@ class OrderItemReturn extends MainModel
     {
         return $this->belongsTo(User::class, 'rejected_by', 'id');
     }
-
+    public function statuses()
+    {
+        return $this->hasMany(OrderItemReturnStatus::class, 'order_item_return_id');
+    }
 }

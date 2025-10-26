@@ -1,5 +1,20 @@
-@php 
+@php
 use App\Enums\StatusOrderItemReturnEnum;
+use Carbon\Carbon;
+
+// كل الحالات المتاحة من الـ Enum
+$statuses = collect(StatusOrderItemReturnEnum::cases())
+->mapWithKeys(fn($status) => [$status->value => ['label' => $status->label()]])
+->toArray();
+
+// الحالات اللي حصلت فعلاً في الداتابيز
+$statusTimes = $orderItemReturn->statuses
+? $orderItemReturn->statuses->pluck('created_at', 'status')->toArray()
+: [];
+
+$orderFlow = array_keys($statuses);
+
+$currentIndex = array_search($orderItemReturn->status->value, $orderFlow);
 @endphp
 
 <div class="card mb-4">
@@ -8,121 +23,37 @@ use App\Enums\StatusOrderItemReturnEnum;
     </div>
 
     <div class="card-body">
-        @if (!in_array($orderItemReturn->status, [StatusOrderItemReturnEnum::Canceled, StatusOrderItemReturnEnum::Rejected]))
-            <ul class="timeline pb-0 mb-0">
+        @if (!in_array($orderItemReturn->status, [
+        StatusOrderItemReturnEnum::Canceled,
+        StatusOrderItemReturnEnum::Rejected
+        ]))
+        <ul class="timeline pb-0 mb-0">
+            @foreach ($statuses as $key => $data)
+            @php
+            $index = array_search($key, $orderFlow);
+            $isActive = $index !== false && $index <= $currentIndex; $time=$statusTimes[$key] ?? null; @endphp <li
+                class="timeline-item timeline-item-transparent {{ $isActive ? 'border-primary' : 'border-secondary' }}">
+                <span
+                    class="timeline-point {{ $isActive ? 'timeline-point-primary' : 'timeline-point-secondary' }}"></span>
 
-                {{-- request --}}
-                <li class="timeline-item timeline-item-transparent 
-                    {{ in_array($orderItemReturn->status, [
-                        StatusOrderItemReturnEnum::Request,
-                        StatusOrderItemReturnEnum::Pending,
-                        StatusOrderItemReturnEnum::Approved,
-                        StatusOrderItemReturnEnum::Shipped,
-                        StatusOrderItemReturnEnum::Delivered,
-                    ]) ? 'border-primary' : 'border-secondary' }}">
-                    
-                    <span class="timeline-point 
-                        {{ in_array($orderItemReturn->status, [
-                            StatusOrderItemReturnEnum::Request,
-                            StatusOrderItemReturnEnum::Pending,
-                            StatusOrderItemReturnEnum::Approved,
-                            StatusOrderItemReturnEnum::Shipped,
-                            StatusOrderItemReturnEnum::Delivered,
-                        ]) ? 'timeline-point-primary' : 'timeline-point-secondary' }}">
-                    </span>
-                    <div class="timeline-event">
-                        <div class="timeline-header">
-                            <h6 class="mb-0">{{ __('site.request') }}</h6>
-                        </div>
+                <div class="timeline-event">
+                    <div class="timeline-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ $data['label'] }}</h6>
+                        @if ($time)
+                        <span class="text-muted">
+                            {{ Carbon::parse($time)->translatedFormat('l h:i A') }}
+                        </span>
+                        @endif
                     </div>
+                </div>
                 </li>
-
-                {{-- pending --}}
-                <li class="timeline-item timeline-item-transparent 
-                    {{ in_array($orderItemReturn->status, [
-                        StatusOrderItemReturnEnum::Pending,
-                        StatusOrderItemReturnEnum::Approved,
-                        StatusOrderItemReturnEnum::Shipped,
-                        StatusOrderItemReturnEnum::Delivered,
-                    ]) ? 'border-primary' : 'border-secondary' }}">
-                    
-                    <span class="timeline-point 
-                        {{ in_array($orderItemReturn->status, [
-                            StatusOrderItemReturnEnum::Pending,
-                            StatusOrderItemReturnEnum::Approved,
-                            StatusOrderItemReturnEnum::Shipped,
-                            StatusOrderItemReturnEnum::Delivered,
-                        ]) ? 'timeline-point-primary' : 'timeline-point-secondary' }}">
-                    </span>
-                    <div class="timeline-event">
-                        <div class="timeline-header">
-                            <h6 class="mb-0">{{ __('site.pending') }}</h6>
-                        </div>
-                    </div>
-                </li>
-
-                {{-- approved --}}
-                <li class="timeline-item timeline-item-transparent 
-                    {{ in_array($orderItemReturn->status, [
-                        StatusOrderItemReturnEnum::Approved,
-                        StatusOrderItemReturnEnum::Shipped,
-                        StatusOrderItemReturnEnum::Delivered,
-                    ]) ? 'border-primary' : 'border-secondary' }}">
-                    
-                    <span class="timeline-point 
-                        {{ in_array($orderItemReturn->status, [
-                            StatusOrderItemReturnEnum::Approved,
-                            StatusOrderItemReturnEnum::Shipped,
-                            StatusOrderItemReturnEnum::Delivered,
-                        ]) ? 'timeline-point-primary' : 'timeline-point-secondary' }}">
-                    </span>
-                    <div class="timeline-event">
-                        <div class="timeline-header">
-                            <h6 class="mb-0">{{ __('site.approved') }}</h6>
-                        </div>
-                    </div>
-                </li>
-
-                {{-- shipped --}}
-                <li class="timeline-item timeline-item-transparent 
-                    {{ in_array($orderItemReturn->status, [
-                        StatusOrderItemReturnEnum::Shipped,
-                        StatusOrderItemReturnEnum::Delivered,
-                    ]) ? 'border-primary' : 'border-secondary' }}">
-                    
-                    <span class="timeline-point 
-                        {{ in_array($orderItemReturn->status, [
-                            StatusOrderItemReturnEnum::Shipped,
-                            StatusOrderItemReturnEnum::Delivered,
-                        ]) ? 'timeline-point-primary' : 'timeline-point-secondary' }}">
-                    </span>
-                    <div class="timeline-event">
-                        <div class="timeline-header">
-                            <h6 class="mb-0">{{ __('site.shipped') }}</h6>
-                        </div>
-                    </div>
-                </li>
-
-                {{-- delivered --}}
-                <li class="timeline-item timeline-item-transparent 
-                    {{ $orderItemReturn->status == StatusOrderItemReturnEnum::Delivered ? 'border-primary' : 'border-secondary' }}">
-                    
-                    <span class="timeline-point 
-                        {{ $orderItemReturn->status == StatusOrderItemReturnEnum::Delivered ? 'timeline-point-primary' : 'timeline-point-secondary' }}">
-                    </span>
-                    <div class="timeline-event">
-                        <div class="timeline-header">
-                            <h6 class="mb-0">{{ __('site.delivered') }}</h6>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+                @endforeach
+        </ul>
         @else
-            {{-- canceled / rejected --}}
-            <div class="alert alert-warning mb-0">
-                <strong>{{ __('site.status') }}:</strong> 
-                {{ __('site.' . $orderItemReturn->status->value) }}
-            </div>
+        <div class="alert alert-warning mb-0">
+            <strong>{{ __('site.status') }}:</strong>
+            {{ $orderItemReturn->status->label() }}
+        </div>
         @endif
     </div>
 </div>

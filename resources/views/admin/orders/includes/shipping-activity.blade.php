@@ -1,110 +1,49 @@
-    <?php 
-    use App\Enums\StatusOrderEnum;
-    ?>
-    <div class="card mb-4">
-         <div class="card-header">
-             <h5 class="card-title m-0">{{ __('site.shipping_activity') }}</h5>
-         </div>
-         <div class="card-body">
-             @if ($order->status != 'cancelled' || $order->status != 'returned' || $order->status != 'rejected')
-                 <ul class="timeline pb-0 mb-0">
+<?php 
+use App\Enums\StatusOrderEnum;
+use Carbon\Carbon;
+?>
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title m-0">{{ __('site.shipping_activity') }}</h5>
+            </div>
+            <div class="card-body">
+                @php
+                $statuses = collect(StatusOrderEnum::cases())
+                ->mapWithKeys(fn($status) => [
+                $status->value => ['label' => $status->label()]
+                ])
+                ->toArray();
 
-                     <li
-                         class="timeline-item timeline-item-transparent {{ in_array($order->status, [
-                             StatusOrderEnum::Request,
-                             StatusOrderEnum::Pending,
-                             StatusOrderEnum::Approved,
-                             StatusOrderEnum::Preparing,
-                             StatusOrderEnum::PreparingFinished,
-                             StatusOrderEnum::DeliveryGo,
-                             StatusOrderEnum::Delivered,
-                         ])
-                             ? 'border-primary'
-                             : 'border-secondary' }}">
+                $statusTimes = $order->orderStatuses->pluck('created_at', 'status')->toArray();
 
-                         <span
-                             class="timeline-point {{ in_array($order->status, [
-                                 StatusOrderEnum::Request,
-                                 StatusOrderEnum::Pending,
-                                 StatusOrderEnum::Approved,
-                                 StatusOrderEnum::Preparing,
-                                 StatusOrderEnum::PreparingFinished,
-                                 StatusOrderEnum::DeliveryGo,
-                                 StatusOrderEnum::Delivered,
-                             ])
-                                 ? 'timeline-point-primary'
-                                 : 'timeline-point-secondary' }}"></span>
+                $orderFlow = array_keys($statuses);
 
-                         <div class="timeline-event">
-                             <div class="timeline-header">
-                                 <h6 class="mb-0">{{ __('site.Request') }}</h6>
-                             </div>
-                         </div>
-                     </li>
-                     
-                     {{-- approved --}}
-                     <li
-                         class="timeline-item timeline-item-transparent {{ in_array($order->status, [
-                             StatusOrderEnum::Approved,
-                             StatusOrderEnum::Preparing,
-                             StatusOrderEnum::PreparingFinished,
-                             StatusOrderEnum::DeliveryGo,
-                             StatusOrderEnum::Delivered,
-                         ])
-                             ? 'border-primary'
-                             : 'border-secondary' }}">
+                $currentIndex = array_search($order->status->value, $orderFlow);
+                @endphp
 
-                         <span
-                             class="timeline-point {{ in_array($order->status, [
-                                 StatusOrderEnum::Approved,
-                                 StatusOrderEnum::Preparing,
-                                 StatusOrderEnum::PreparingFinished,
-                                 StatusOrderEnum::DeliveryGo,
-                                 StatusOrderEnum::Delivered,
-                             ])
-                                 ? 'timeline-point-primary'
-                                 : 'timeline-point-secondary' }}"></span>
+                <ul class="timeline pb-0 mb-0">
+                    @foreach ($statuses as $key => $data)
+                    @php
+                    $index = array_search($key, $orderFlow);
+                    $isActive = $index !== false && $index <= $currentIndex; $time=$statusTimes[$key] ?? null; @endphp
+                        <li
+                        class="timeline-item timeline-item-transparent {{ $isActive ? 'border-primary' : 'border-secondary' }}">
+                        <span
+                            class="timeline-point {{ $isActive ? 'timeline-point-primary' : 'timeline-point-secondary' }}"></span>
 
-                         <div class="timeline-event">
-                             <div class="timeline-header">
-                                 <h6 class="mb-0">{{ __('site.approved') }}</h6>
-                             </div>
-                         </div>
-                     </li>
-
-                     {{-- delivery_go --}}
-                     <li
-                         class="timeline-item timeline-item-transparent {{ in_array($order->status, [StatusOrderEnum::DeliveryGo, StatusOrderEnum::Delivered])
-                             ? 'border-primary'
-                             : 'border-secondary' }}">
-
-                         <span
-                             class="timeline-point {{ in_array($order->status, [StatusOrderEnum::DeliveryGo, StatusOrderEnum::Delivered])
-                                 ? 'timeline-point-primary'
-                                 : 'timeline-point-secondary' }}"></span>
-
-                         <div class="timeline-event">
-                             <div class="timeline-header">
-                                 <h6 class="mb-0">{{ __('site.delivery_go') }}</h6>
-                             </div>
-                         </div>
-                     </li>
-
-                     {{-- delivered --}}
-                     <li
-                         class="timeline-item timeline-item-transparent {{ $order->status == StatusOrderEnum::Delivered ? 'border-primary' : 'border-secondary' }}">
-
-                         <span
-                             class="timeline-point {{ $order->status == StatusOrderEnum::Delivered ? 'timeline-point-primary' : 'timeline-point-secondary' }}"></span>
-
-                         <div class="timeline-event">
-                             <div class="timeline-header">
-                                 <h6 class="mb-0">{{ __('site.delivered') }}</h6>
-                             </div>
-                         </div>
-                     </li>
-                 </ul>
-             @endif
-         </div>
-     </div>
- </div>
+                        <div class="timeline-event">
+                            <div class="timeline-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">{{ $data['label'] }}</h6>
+                                @if($time)
+                                <span class="text-muted">{{ Carbon::parse($time)->format('l h:i A') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        </li>
+                        @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>

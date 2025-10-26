@@ -11,10 +11,9 @@ class StatusOrderItemsReturnHelper
         return [
 
             StatusOrderItemReturnEnum::Request->value => StatusOrderItemReturnEnum::except([
-                StatusOrderItemReturnEnum::Request,
             ]),
             StatusOrderItemReturnEnum::Pending->value => StatusOrderItemReturnEnum::except([
-                StatusOrderItemReturnEnum::Pending,
+                StatusOrderItemReturnEnum::Request,
             ]),
             StatusOrderItemReturnEnum::Approved->value => StatusOrderItemReturnEnum::except([
                 StatusOrderItemReturnEnum::Request,

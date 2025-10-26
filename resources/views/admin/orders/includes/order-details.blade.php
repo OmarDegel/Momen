@@ -1,96 +1,105 @@
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title m-0">{{ __('site.order_details') }}</h5>
+        <span class="badge bg-label-primary text-capitalize">{{ $order->status->label() }}</span>
     </div>
 
-    <div class="card-datatable table-responsive">
-        <table class="datatables-order-details table border-top">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th class="text-lg-center">{{ __('site.product') }}</th>
-                    <th class="text-lg-center">Product Child ID</th>
-                    <th class="text-lg-center">Offer Price</th>
-                    <th class="text-lg-center">Base Price</th>
-                    <th class="text-lg-center">Amount</th>
-                    <th class="text-lg-center">Price Addition</th>
-                    <th class="text-lg-center">Amount Addition</th>
-                    <th class="text-lg-center">Offer Amount</th>
-                    <th class="text-lg-center">Offer Amount Add</th>
-                    <th class="text-lg-center">Free Amount</th>
-                    <th class="text-lg-center">Total Amount</th>
-                    <th class="text-lg-center">Shipping</th>
-                    <th class="text-lg-center">Total</th>
-                    <th class="text-lg-center">Total Price</th>
-                    <th class="text-lg-center">Is Return</th>
-                </tr>
-            </thead>
+    <div class="card-body">
+        <div class="border rounded-3 p-3 mb-4 shadow-sm">
+            {{-- USER INFO --}}
+            <div class="d-flex align-items-center mb-3">
+                @if($order->user && $order->user->image)
+                <a href="{{ asset($order->user->image) }}" target="_blank">
+                    <img src="{{ asset($order->user->image) }}" width="60" height="60" class="rounded-3 me-3">
+                </a>
+                @else
+                <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded-3 me-3"
+                    style="width:60px;height:60px;">
+                    <i class="ti ti-user"></i>
+                </div>
+                @endif
 
-            <tbody>
-                @foreach ($order->orderItems as $orderItem)
-                <tr>
-                    {{-- صورة المنتج --}}
-                    <td class="text-center">
-                        <div class="avatar-wrapper">
-                            <div class="avatar me-2">
-                                <img src="{{ asset($orderItem->product->image) }}" class="rounded-2" width="40"
-                                    height="40" alt="">
-                            </div>
-                        </div>
-                    </td>
+                <div>
+                    <h6 class="mb-1">{{ $order->user->name ?? __('site.guest_user') }}</h6>
+                    <small class="text-muted">{{ __('site.email') }}: {{ $order->user->email ?? '-' }}</small><br>
+                    <small class="text-muted">{{ __('site.phone') }}: {{ $order->user->phone ?? '-' }}</small>
+                </div>
+            </div>
 
+            {{-- ORDER INFO --}}
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>{{ __('site.order_id') }}:</strong> #{{ $order->id }}</div>
+                <div class="col-md-4"><strong>{{ __('site.payment') }}:</strong> {{ $order->payment->nameLang() ?? '-'
+                    }}</div>
+                <div class="col-md-4"><strong>{{ __('site.address') }}:</strong>
                     <td class="text-lg-center">
-                        <strong>{{ $orderItem->product->nameLang() }}</strong>
+                        <a href="https://www.google.com/maps?q={{ $order->address->latitude }},{{ $order->address->longitude }}"
+                            target="_blank">
+                            <button disabled type="button"
+                                class="btn btn-success active-cities waves-effect waves-light">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </button>
+                        </a>
                     </td>
+                </div>
+            </div>
 
-                    <td class="text-lg-center">{{ $orderItem->product_child_id ?? '-' }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->offer_price, 2) }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->price, 2) }}</td>
-                    <td class="text-lg-center">{{ $orderItem->amount }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->price_addition, 2) }}</td>
-                    <td class="text-lg-center">{{ $orderItem->amount_addition }}</td>
-                    <td class="text-lg-center">{{ $orderItem->offer_amount }}</td>
-                    <td class="text-lg-center">{{ $orderItem->offer_amount_add }}</td>
-                    <td class="text-lg-center">{{ $orderItem->free_amount }}</td>
-                    <td class="text-lg-center">{{ $orderItem->total_amount }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->shipping, 2) }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->total, 2) }}</td>
-                    <td class="text-lg-center">{{ number_format($orderItem->total_price, 2) }}</td>
-                    <td class="text-lg-center">
-                        @if($orderItem->is_return)
-                        <span class="badge bg-danger">Returned</span>
-                        @else
-                        <span class="badge bg-success">Active</span>
-                        @endif
-                    </td>
-                    
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>{{ __('site.city') }}:</strong> {{ $order->city->nameLang() ?? '-' }}
+                </div>
+                {{-- <div class="col-md-4"><strong>{{ __('site.region') }}:</strong> {{ $order->region->nameLang() ??
+                    '-' }}</div> --}}
+                <div class="col-md-4"><strong>{{ __('site.delivery_time') }}:</strong> {{
+                    $order->deliveryTime->nameLang() ?? '-' }}</div>
+            </div>
 
-        {{-- حسابات الطلب --}}
-        <div class="d-flex justify-content-end align-items-center m-3 mb-2 p-1">
-            <div class="order-calculations">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="w-px-100 text-heading">{{ __('site.subtotal') }}:</span>
-                    <h6 class="mb-0">{{ number_format($order->price, 2) }}</h6>
+            {{-- PRICES --}}
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>{{ __('site.price') }}:</strong> {{ number_format($order->price, 2) }}
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="w-px-100 text-heading">{{ __('site.discount') }}:</span>
-                    <h6 class="mb-0">{{ number_format($order->discount, 2) }}</h6>
+                <div class="col-md-4"><strong>{{ __('site.shipping') }}:</strong> {{ number_format($order->shipping, 2)
+                    }}</div>
+                <div class="col-md-4"><strong>{{ __('site.tax') }}:</strong> {{ number_format($order->tax, 2) }}</div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>{{ __('site.discount') }}:</strong> {{ number_format($order->discount, 2)
+                    }}</div>
+                <div class="col-md-4"><strong>{{ __('site.coupon') }}:</strong> {{ $order->coupon_type ?? '-' }} ({{
+                    number_format($order->coupon_discount, 2) }})</div>
+                <div class="col-md-4"><strong>{{ __('site.total') }}:</strong> {{ number_format($order->total, 2) }}
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="w-px-100 text-heading">{{ __('site.shipping') }}:</span>
-                    <h6 class="mb-0">{{ number_format($order->shipping, 2) }}</h6>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-4"><strong>{{ __('site.paid') }}:</strong> {{ number_format($order->paid, 2) }}</div>
+                <div class="col-md-4"><strong>{{ __('site.remaining') }}:</strong> {{ number_format($order->remaining,
+                    2) }}</div>
+                <div class="col-md-4"><strong>{{ __('site.wallet') }}:</strong> {{ number_format($order->wallet, 2) }}
                 </div>
-                <div class="d-flex justify-content-between">
-                    <h6 class="w-px-100 mb-0">{{ __('site.total') }}:</h6>
-                    <h6 class="mb-0">{{ number_format($order->total, 2) }} EGP</h6>
-                </div>
+            </div>
+
+            {{-- NOTES --}}
+            @if($order->note || $order->admin_note || $order->delivery_note)
+            <div class="mt-3">
+                @if($order->note)
+                <div><strong>{{ __('site.note') }}:</strong> {{ $order->note }}</div>
+                @endif
+                @if($order->admin_note)
+                <div><strong>{{ __('site.admin_note') }}:</strong> {{ $order->admin_note }}</div>
+                @endif
+                @if($order->delivery_note)
+                <div><strong>{{ __('site.delivery_note') }}:</strong> {{ $order->delivery_note }}</div>
+                @endif
+            </div>
+            @endif
+
+            {{-- META --}}
+            <div class="mt-3 text-muted small">
+                <div>{{ __('site.created_at') }}: {{ $order->created_at }}</div>
+                <div>{{ __('site.updated_at') }}: {{ $order->updated_at }}</div>
+                <div>{{ __('site.cancel_by') }}: {{ $order->cancel_by ?? '-' }} ({{ $order->cancel_date ?? '-' }})</div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="col-12 col-lg-8">

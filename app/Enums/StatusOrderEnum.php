@@ -7,12 +7,12 @@ enum StatusOrderEnum: string
     case Request = 'request';
     case Pending = 'pending';
     case Approved = 'approved';
-    case Rejected = 'rejected';
     case Preparing = 'preparing';
     case PreparingFinished = 'preparingFinished';
     case DeliveryGo = 'deliveryGo';
     case Delivered = 'delivered';
     case Canceled = 'canceled';
+    case Rejected = 'rejected';
     case ReturnedPartial = 'returnedPartial';
     case Returned = 'returned';
 
@@ -36,6 +36,4 @@ enum StatusOrderEnum: string
             fn(self $case) => in_array($case, $only, true)
         ));
     }
-
-
 }

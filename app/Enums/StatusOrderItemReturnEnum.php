@@ -6,12 +6,12 @@ enum StatusOrderItemReturnEnum: string
 {
     case Pending = 'pending';
     case Approved = 'approved';
-    case Rejected = 'rejected';
-    case Canceled = 'canceled';
     case Request = 'request';
     case Shipped = 'shipped';
     case Delivered = 'delivered';
+    case Canceled = 'canceled';
 
+    case Rejected = 'rejected';
     public function label(): string
     {
         return __('site.' . $this->value);

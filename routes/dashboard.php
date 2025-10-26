@@ -138,5 +138,16 @@ Route::get('delivery_times/active/{delivery_time}', [AjaxController::class, 'del
 
 Route::get('products/feature/{product}', [AjaxController::class, 'feature'])->name('products.feature');
 Route::get('products/returned/{product}', [AjaxController::class, 'returned'])->name('products.is_returned');
-    Route::post('orders/change_status/{order}', [AjaxController::class, 'changeStatus'])->name('orders.change_status');
-    Route::post('orderItemReturns/change_status/{item}', [AjaxController::class, 'changeItemStatus'])->name('order_item_returns.change_status');
+Route::post('orders/change_status/{order}', [AjaxController::class, 'changeStatus'])->name('orders.change_status');
+Route::post('orderItemReturns/change_status/{item}', [AjaxController::class, 'changeItemStatus'])->name('order_item_returns.change_status');
+
+
+
+Route::group([ 'middleware' => ['web','admin',"dashboard"]], function () {
+    Route::get('translations', [Barryvdh\TranslationManager\Controller::class, 'getIndex'])->name('translations.index');
+    Route::post('translations/import', [Barryvdh\TranslationManager\Controller::class, 'postImport'])->name('translations.import');
+    Route::post('translations/find', [Barryvdh\TranslationManager\Controller::class, 'postFind'])->name('translations.find');
+    Route::post('translations/add', [Barryvdh\TranslationManager\Controller::class, 'postAdd'])->name('translations.add');
+    Route::post('translations/delete', [Barryvdh\TranslationManager\Controller::class, 'postDelete'])->name('translations.delete');
+    Route::post('translations/translate-missing', [Barryvdh\TranslationManager\Controller::class, 'postTranslateMissing'])->name('translations.translateMissing');
+});
