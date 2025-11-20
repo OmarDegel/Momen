@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Enums;
+
+enum StatusOrderItemReturnEnum: string
+{
+    case Pending = 'pending';
+    case Approved = 'approved';
+    case Request = 'request';
+    case Shipped = 'shipped';
+    case Delivered = 'delivered';
+    case Canceled = 'canceled';
+
+    case Rejected = 'rejected';
+    public function label(): string
+    {
+        return __('site.' . $this->value);
+    }
+    public static function except(array $excluded): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            fn(self $case) => !in_array($case, $excluded, true)
+        ));
+    }
+    public static function only(array $only): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            fn(self $case) => in_array($case, $only, true)
+        ));
+    }
+}
