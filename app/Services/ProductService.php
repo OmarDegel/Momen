@@ -2,77 +2,90 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Arr;
-use App\Services\ProductImagesService;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Event;
 
 class ProductService
 {
-    protected $imagesService;
-    public function __construct(ProductImagesService $imagesService)
+    private $imageService;
+    public function __construct(ProductImagesService $imageService)
     {
-        $this->imagesService = $imagesService;
+        $this->imageService = $imageService;
     }
 
-
-    public function handleProductChildren($request, $product)
+    public function handleProductChildren($request, $product, $parentAttributes = [])
     {
-        if (!$request->has('children') || !is_array($request->children)) return;
+        if (!$request->has('children') || !is_array($request->children)) {
+            return;
+        }
+        if (empty($parentAttributes)) {
+            $parentAttributes = Arr::except($product->toArray(), [
+                'price',
+                'offer_price',
+                'is_offer',
+                'color_id',
+                'size_id',
+                'id',
+                'created_at',
+                'updated_at',
+            ]);
+        }
 
-        $parentAttributes = Arr::except($request->all(), [
-            'price',
-            'offer_price',
-            'is_offer',
-            'size_id',
-            'id',
-            'created_at',
-            'updated_at',
-            'deleted_at',
-            'color_id',
-            'children',
-            'images',
-        ]);
-
-        Model::withoutEvents(function () use ($parentAttributes, $product, $request) {
+        Model::withoutEvents(function () use ($request, $product, $parentAttributes) {
             $receivedIds = [];
 
-            foreach ($request->children as $index => $childData) {
-                $data = array_merge($parentAttributes, Arr::except($childData, ['id', 'sizes']));
+            foreach ($request->children as $childData) {
+                $data = array_merge($parentAttributes, Arr::except($childData, ['id']));
                 $data['parent_id'] = $product->id;
 
-                $childImages = $request->hasFile("children.$index.images")
-                    ? $request->file("children.$index.images")
-                    : [];
-
-                $sizes = $childData['sizes'] ?? [];
+                $child = null;
 
                 if (isset($childData['id'])) {
                     $child = $product->children()->find($childData['id']);
                     if ($child) {
                         $child->update($data);
-                        $child->sizes()->sync($sizes);
-                        $receivedIds[] = $child->id;
-
-                        if (!empty($childImages)) {
-                            $this->imagesService->deleteImage($child->id);
-                            $this->imagesService->uploadImage('products', $childImages, $child->id);
-                        }
                     }
-                } else {
-                    // طالما فيه بيانات كافية أو مقاسات
-                    if (!empty($sizes)) {
-                        $newChild = $product->children()->create($data);
-                        $newChild->sizes()->sync($sizes);
-                        $receivedIds[] = $newChild->id;
+                }
 
-                        if (!empty($childImages)) {
-                            $this->imagesService->uploadImage('products', $childImages, $newChild->id);
-                        }
+                if (!$child) {
+                    if (isset($childData['color_id']) && isset($childData['price'])) {
+                        $child = $product->children()->create($data);
                     }
+                }
+
+                if ($child) {
+                    if (isset($childData['images']) && is_array($childData['images'])) {
+                        $this->handleChildImages($child, $childData['images']);
+                    }
+
+                    if (isset($childData['sizes']) && is_array($childData['sizes'])) {
+                        $child->sizes()->sync($childData['sizes']);
+                    }
+                    if(isset($childData['delete_ids[']) && is_array($childData['delete_ids['])){   
+                        $arr=implode(',', $childData['delete_ids[']); 
+                        $this->imageService->deleteImages($arr);
+                    }
+                    $receivedIds[] = $child->id;
                 }
             }
 
             $product->children()->whereNotIn('id', $receivedIds)->delete();
         });
+    }
+
+
+    protected function handleChildImages(Product $child, array $imageData): void
+    {
+        if ($child->images()->count() > 0) {
+            $this->imageService->deleteImage($child->id);
+            $child->images()->delete();
+        }
+
+
+        
+            $this->imageService->uploadImage('products', $imageData, $child->id);
+
     }
 }

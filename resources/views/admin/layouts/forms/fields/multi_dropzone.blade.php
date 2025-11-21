@@ -10,8 +10,9 @@
     </div>
 
     <input type="file" name="{{ $name }}[]" class="d-none dropzone-hidden-input" multiple />
+    <input type="hidden" name="delete_ids[]" class="dropzone-delete-old-input" />
 
     @error($name)
-    <span class="text-danger d-block mt-2">{{ $message }}</span>
+        <span class="text-danger d-block mt-2">{{ $message }}</span>
     @enderror
 </div>

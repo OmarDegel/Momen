@@ -88,7 +88,7 @@ if (! function_exists('setting')) {
         return Setting::where('key', $key)->value('value') ?? $default;
     }
 }
-if(! function_exists('deliveryTimeType')) {
+if (! function_exists('deliveryTimeType')) {
     function deliveryTimeType()
     {
         return [
@@ -97,5 +97,17 @@ if(! function_exists('deliveryTimeType')) {
             "afternoon" => __('site.afternoon'),
             "night" => __('site.night'),
         ];
+    }
+}
+if (! function_exists('defaultOption')) {
+    function defaultOption($label = null)
+    {
+        return [null => $label ?? __('site.select_option')];
+    }
+}
+if (! function_exists('filterOption')) {
+    function filterOption($label = null)
+    {
+        return ['all' => $label ?? __('site.all')];
     }
 }

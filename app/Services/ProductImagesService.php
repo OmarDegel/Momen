@@ -12,7 +12,6 @@ class ProductImagesService
     public function uploadImage($folder = 'products', $images, $productId, $width = 800, $height = 600)
     {
         if (empty($images)) return null;
-
         $images = is_array($images) ? $images : [$images];
 
         $manager = new ImageManager(new Driver());
@@ -76,5 +75,14 @@ class ProductImagesService
         }
 
         return $product->galleries;
+    }
+    public function deleteImages($delete_ids)
+    {
+        if (is_array($delete_ids) && count($delete_ids) > 0) {
+            foreach ($delete_ids as $id) {
+                $this->deleteSingleImage(ProductGallery::find($id)->image);
+                ProductGallery::find($id)->delete();
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 <tr>
     <td class="text-center">{{ $itemReturn->user?->name_first}} {{ $itemReturn->user?->name_last }}</td>
-    <td class="text-center">{{ $itemReturn->user?->phnne ?? __('site.null') }}</td>
+    <td class="text-center">{{ $itemReturn->user?->phone ?? __('site.null') }}</td>
     <td class="text-center">#{{ $itemReturn->order_id }}</td>
     <td class="text-center">{{ $itemReturn->orderItem?->product?->nameLang() ?? __('site.null') }}</td>
     <td class="text-center">{{ $itemReturn->reason?->nameLang() ?? __('site.null') }}</td>
