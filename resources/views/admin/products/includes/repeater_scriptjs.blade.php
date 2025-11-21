@@ -10,23 +10,17 @@
         function validateAll() {}
 
 
-
         function initializeDropzone(element) {
             const $dropzoneElement = $(element);
 
-            // 1. الإمساك بحقول الإدخال (الملفات + الحذف)
-            const $formGroup = $dropzoneElement.closest('.form-group');
-            const $hiddenFileInput = $formGroup.find('.dropzone-hidden-input');
-            const $hiddenDeleteInput = $formGroup.find('.dropzone-delete-old-input');
-
+            // منع تهيئة العنصر مرتين
             if ($dropzoneElement.hasClass('dz-main-container')) {
                 return;
             }
 
-            // قراءة البيانات (التي تحتوي الآن على id و url)
             const existingImages = $dropzoneElement.data('existing-images') || [];
 
-            // مصفوفة لتخزين الـ IDs المحذوفة الخاصة بهذا العنصر فقط
+            // مصفوفة لتخزين المحذوفات لهذا العنصر
             let localDeletedIDs = [];
 
             let previewTemplate = `
@@ -35,7 +29,7 @@
             <img class="dz-thumbnail" data-dz-thumbnail />
         </div>
         <button class="dz-delete border-0 p-0" type="button" data-dz-remove>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                 <path fill="#FFFFFF" d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path>
             </svg>
         </button>
@@ -54,68 +48,105 @@
                 init: function() {
                     const myDropzoneInstance = this;
 
-                    // دالة تحديث الملفات الجديدة (تجاهل القديمة)
-                    const updateHiddenInput = () => {
+                    // ==========================================
+                    // دالة لتحديث الصور الجديدة فقط في الـ Input
+                    // تستقبل الـ input الحي كـ parameter لضمان الدقة
+                    // ==========================================
+                    const updateHiddenFileInput = ($liveInput = null) => {
+                        // إذا لم يمرر input، نحاول العثور عليه (كاحتياطي)
+                        if (!$liveInput) {
+                            $liveInput = $(myDropzoneInstance.element).closest('.form-group')
+                                .find('.dropzone-hidden-input');
+                        }
+
                         let dataTransfer = new DataTransfer();
                         myDropzoneInstance.files.forEach(f => {
-                            if (!f.isExisting) { // فقط الصور الجديدة
+                            // الشرط الذهبي: نضيف الملف فقط إذا لم يكن صورة قديمة
+                            if (!f.isExisting) {
                                 dataTransfer.items.add(f);
                             }
                         });
-                        $hiddenFileInput[0].files = dataTransfer.files;
+
+                        if ($liveInput.length > 0) {
+                            $liveInput[0].files = dataTransfer.files;
+                            // console.log('New Files Count:', $liveInput[0].files.length); // Debug
+                        }
                     };
 
-                    // 2. عرض الصور القديمة (مع الـ ID)
-                    if (existingImages && Array.isArray(existingImages) && existingImages.length >
-                        0) {
+                    // ==========================================
+                    // 1. عرض الصور القديمة
+                    // ==========================================
+                    if (Array.isArray(existingImages) && existingImages.length > 0) {
                         existingImages.forEach(imgData => {
-                            // التحقق مما إذا كانت البيانات نص (رابط فقط) أو كائن (id + url)
-                            let imgUrl = typeof imgData === 'string' ? imgData : imgData
-                            .url;
-                            let imgId = typeof imgData === 'object' ? imgData.id : null;
+                            let url = typeof imgData === 'object' ? imgData.url : imgData;
+                            let id = typeof imgData === 'object' ? imgData.id : null;
 
-                            const mockFile = {
+                            let mockFile = {
                                 name: "Existing Image",
                                 size: 12345,
-                                dataURL: imgUrl,
-                                isExisting: true, // علم
-                                id: imgId // تخزين الـ ID هنا
+                                dataURL: url,
+                                isExisting: true, // علامة مميزة
+                                id: id // نحفظ الـ ID
                             };
 
                             this.emit("addedfile", mockFile);
-                            this.emit("thumbnail", mockFile, imgUrl);
+                            this.emit("thumbnail", mockFile, url);
                             this.emit("complete", mockFile);
                             this.files.push(mockFile);
                         });
                     }
 
+                    // وضع كلاس لمنع إعادة التهيئة
                     $dropzoneElement.addClass('dz-main-container');
 
-                    // عند إضافة ملف جديد
+                    // ==========================================
+                    // 2. عند إضافة صورة جديدة
+                    // ==========================================
                     this.on("addedfile", function(file) {
-                        if (file.isExisting) return;
-                        updateHiddenInput();
+                        if (file.isExisting) return; // تجاهل الصور القديمة
+
+                        // نستخدم Input الحي دائماً
+                        const $liveFileInput = $(this.element).closest('.form-group').find(
+                            '.dropzone-hidden-input');
+                        updateHiddenFileInput($liveFileInput);
                     });
 
-                    // 3. عند حذف ملف (المنطق الهام)
+                    // ==========================================
+                    // 3. عند الحذف (المنطق المُحدث)
+                    // ==========================================
                     this.on("removedfile", function(file) {
+                        console.log("Removing file:", file);
 
-                        // أ) إذا كان الملف قديماً ولديه ID
+                        // أ) إذا كانت صورة قديمة ولديها ID
                         if (file.isExisting && file.id) {
-                            localDeletedIDs.push(file.id);
-                            // تحديث الـ Input بقيم مفصولة بفاصلة (مثال: "15,20,33")
-                            $hiddenDeleteInput.val(localDeletedIDs.join(','));
+                            // 1. منع التكرار
+                            if (!localDeletedIDs.includes(file.id)) {
+                                localDeletedIDs.push(file.id);
+                            }
 
-                            console.log('Deleted IDs:', $hiddenDeleteInput
-                        .val()); // للتجربة
+                            // 2. ⭐ البحث عن الـ Input الحي (Live) لضمان التحديث الصحيح داخل Repeater
+                            const $liveDeleteInput = $(this.element).closest('.form-group')
+                                .find('.dropzone-delete-old-input');
+
+                            // 3. التحديث
+                            if ($liveDeleteInput.length > 0) {
+                                $liveDeleteInput.val(localDeletedIDs.join(','));
+                                console.log("Live Delete Input Updated:", $liveDeleteInput
+                                    .val());
+                            } else {
+                                console.error("Delete Input Not Found!");
+                            }
                         }
 
-                        // ب) تحديث قائمة الملفات الجديدة (في حال حذفت صورة قمت برفعها للتو)
-                        updateHiddenInput();
+                        // ب) تحديث قائمة الملفات الجديدة
+                        const $liveFileInput = $(this.element).closest('.form-group').find(
+                            '.dropzone-hidden-input');
+                        updateHiddenFileInput($liveFileInput);
                     });
                 }
             });
         }
+
 
         // =================================================================
         // 3. تعريف الـ Repeater (مرة واحدة فقط)
@@ -123,7 +154,7 @@
         $('.form-repeater').repeater({
             initEmpty: false,
 
-            show: function() {
+           show : function() {
                 // أ. تنظيف Select2
                 $(this).find('.select2-container').remove();
                 $(this).find('select.select2-hidden-accessible')

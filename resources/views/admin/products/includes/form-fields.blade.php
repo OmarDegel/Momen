@@ -80,19 +80,19 @@
 
 {{-- @include('admin.products.includes.date_fields') --}}
 @php
-    $imageUrls = [];
 
+    // 1. تجهيز مصفوفة PHP من روابط الصور، وليس نص JSON.
+    $imageUrls = [];
     if ($product && $product->images && $product->images->count()) {
         $imageUrls = $product->images
-            ->map(function ($imageModel) {
-                return [
-                    'id' => $imageModel->id, 
-                    'url' => asset($imageModel->image), 
-                ];
+            ->pluck('image')
+            ->map(function ($imagePath) {
+                return asset($imagePath);
             })
             ->toArray();
     }
 @endphp
+
 @include('admin.layouts.forms.fields.multi_dropzone', [
     'name' => 'images',
     'existing_images' => $imageUrls,

@@ -1,4 +1,4 @@
-<script>
+{{-- <script>
     'use strict';
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -20,4 +20,4 @@
       });
     }
   });
-</script>
+</script> --}}

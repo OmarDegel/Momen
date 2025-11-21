@@ -1,4 +1,4 @@
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-6">
         @include('admin.layouts.forms.fields.date', [
         'date_name' => 'date_start',
@@ -21,4 +21,4 @@
         'not_req' => true
         ])
     </div>
-</div>
+</div> --}}

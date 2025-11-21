@@ -121,31 +121,39 @@ class ProductController extends MainController
 
     public function update(ProductRequest $request, Product $product)
     {
-
         try {
-            DB::transaction(function () use ($product, $request) {
-                $product->update($request->all());
-                $this->imageService->editImages($request->images, $product, 'products');
-                if (isset($request->delete_ids)) {
-                    $arr=implode(',', $request->delete_ids);
-                    $this->imageService->deleteImages($arr);
+            DB::transaction(function () use ($request, $product) {
+
+                $product->update($request->except(['date_start','images', 'delete_ids', 'children']));
+
+                if (!empty($request->delete_ids)) {
+                    $deleteIds = is_array($request->delete_ids)
+                        ? $request->delete_ids
+                        : explode(',', $request->delete_ids);
+
+                    $this->imageService->deleteImages($deleteIds);
                 }
-                $product->categories()->sync($request->categories);
+
+                if ($request->hasFile('images')) {
+                    $this->imageService->editImages($request->images, $product, 'products');
+                }
+
+                if ($request->has('categories')) {
+                    $product->categories()->sync($request->categories);
+                }
+
                 $this->productService->handleProductChildren($request, $product);
             });
         } catch (\Throwable $th) {
-            if (isset($data['image'])) {
-                $this->imageService->deleteImage($data['image']);
-            }
-
-
-            return redirect()->back()
-                ->with('error', __('site.something_went_wrong'))
-                ->withInput();
+            return redirect()->back()->with('error', $th->getMessage())->withInput();
         }
 
-        return redirect()->route('dashboard.products.index')->with('success', __('site.updated_successfully'));
+        return redirect()->route('dashboard.products.index')
+            ->with('success', __('site.updated_successfully'));
     }
+
+
+
 
 
 

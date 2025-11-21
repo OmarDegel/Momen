@@ -1,16 +1,18 @@
 @php
-    $formattedImages = [];
-
-    if (isset($child) && $child->images) {
-        $formattedImages = $child->images
+    $imageUrls = [];
+    if ($child && $child->images && $child->images->count()) {
+        $imageUrls = $child->images
             ->map(function ($img) {
                 return [
-                    'id' => $img->id,
-                    'url' => asset($img->image),
+                    'id' => $img->id, // ID الحقيقي للصورة
+                    'url' => asset($img->image), // رابط الصورة
+                    'name' => basename($img->image), // اسم الصورة
+                    'size' => 12345, // حجم وهمي أو لو عندك الحجم الحقيقي
                 ];
             })
             ->toArray();
     }
+
 @endphp
 <div data-repeater-item class="row g-3 align-items-end mb-3">
 
@@ -80,7 +82,7 @@
     {{-- File Upload --}}
     @include('admin.layouts.forms.fields.multi_dropzone', [
         'name' => 'children[][images]',
-        'existing_images' => $formattedImages, //
+        'existing_images' => $imageUrls, //
     ])
     {{-- Delete Button --}}
     <div class="col-auto d-flex align-items-end">

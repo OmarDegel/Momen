@@ -2,19 +2,17 @@
 
 namespace App\Http\Requests\Dashboard;
 
-use App\Models\Product;
+use App\Rules\FreeShippingRule;
+use App\Rules\OfferAmountAddRule;
+use App\Rules\OfferAmountRule;
+use App\Rules\OfferPercentRule;
 use App\Rules\OfferRule;
 use App\Rules\OrderMaxRule;
 use App\Rules\PriceOfferRule;
-use App\Rules\OfferAmountRule;
-use App\Rules\FreeShippingRule;
-use App\Rules\OfferPercentRule;
-use Illuminate\Validation\Rule;
-use App\Rules\OfferAmountAddRule;
+use App\Rules\UniqueChildColorRule; // 👈 استدعاء القاعدة الجديدة
 use App\Rules\ValidServiceCategoriesRule;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\UniqueChildColorRule; // 👈 استدعاء القاعدة الجديدة
-use Spatie\Html\Elements\P;
+use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -58,12 +56,11 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        
         $productId = optional($this->product)->id;
         $childrenRules = [];
+
         if ($this->has('children') && is_array($this->input('children'))) {
             foreach ($this->input('children') as $index => $child) {
-                $hasParent = Product::where('id', $child['id'])->where('parent_id', $productId)->exists();
                 $childrenRules["children.{$index}.color_id"] = [
                     'required',
                     'exists:colors,id',
@@ -77,22 +74,12 @@ class ProductRequest extends FormRequest
                     'exists:sizes,id'
                 ];
 
-                $imagesRule = [];
+                $childrenRules["children.{$index}.images"] = [
+                    'required',
+                    'array',
+                    'min:1',
 
-                if ($hasParent) {
-                    $imagesRule = ['nullable', 'array'];
-                } else {
-                    $imagesRule = [
-                        $index == 0 ? 'required' : 'nullable',
-                        'array',
-                    ];
-
-                    if ($index == 0) {
-                        $imagesRule[] = 'min:1';
-                    }
-                }
-
-                $childrenRules["children.{$index}.images"] = $imagesRule;
+                ];
 
                 $childrenRules["children.{$index}.is_offer"] = ['required', 'boolean'];
                 $childrenRules["children.{$index}.price"] = ['required', 'numeric', 'gt:1'];
@@ -121,8 +108,8 @@ class ProductRequest extends FormRequest
                         return $query->whereNull('parent_id');
                     }),
             ],
-            'images.*' => [Product::find($productId)->images()->count() > 0 ? 'nullable' : 'required', 'image', 'mimes:jpg,jpeg,png', 'max:5000'],
-            'children.*.images.*' => ['image', 'mimes:jpg,jpeg,png', 'max:5000'],
+            'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5000'],
+            'children.*.images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5000'],
             "name.ar" => "required|string|max:255",
             "name.en" => "required|string|max:255",
             "content.ar" => "nullable|string|max:1000",
@@ -161,11 +148,8 @@ class ProductRequest extends FormRequest
         $messages['children.*.color_id.required'] = __("validation.required", ["attribute" => __("site.color") . ' ' . __('site.for_child')]);
         $messages['children.*.sizes.required'] = __("validation.required", ["attribute" => __("site.sizes") . ' ' . __('site.for_child')]);
         $messages['children.*.sizes.min'] = __("validation.min.array", ["attribute" => __("site.sizes") . ' ' . __('site.for_child'), 'min' => 1]);
-
-        if ($this->product?->parent_id === null) {
-            $messages['children.*.images.required'] = __("validation.required", ["attribute" => __("site.images") . ' ' . __('site.for_child')]);
-            $messages['children.*.images.min'] = __("validation.min.array", ["attribute" => __("site.images") . ' ' . __('site.for_child'), 'min' => 1]);
-        }
+        $messages['children.*.images.required'] = __("validation.required", ["attribute" => __("site.images") . ' ' . __('site.for_child')]);
+        $messages['children.*.images.min'] = __("validation.min.array", ["attribute" => __("site.images") . ' ' . __('site.for_child'), 'min' => 1]);
 
         $messages['unique_color_in_children'] = __('validation.unique_color_in_children');
 
