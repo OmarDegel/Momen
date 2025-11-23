@@ -9,10 +9,8 @@
         </div>
     </div>
 
-    <!-- الملفات الجديدة -->
     <input type="file" name="{{ $name }}[]" class="d-none dropzone-hidden-input" multiple />
 
-    <!-- IDs الصور المحذوفة -->
     <input type="hidden" name="{{ str_replace('images', 'delete_ids', $name) }}" class="dropzone-delete-old-input"
         value="" />
 

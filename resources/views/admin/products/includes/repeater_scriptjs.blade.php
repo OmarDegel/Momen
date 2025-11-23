@@ -148,24 +148,22 @@
         }
 
 
-        // =================================================================
-        // 3. تعريف الـ Repeater (مرة واحدة فقط)
-        // =================================================================
         $('.form-repeater').repeater({
             initEmpty: false,
 
-           show : function() {
-                // أ. تنظيف Select2
+            show: function() {
                 $(this).find('.select2-container').remove();
                 $(this).find('select.select2-hidden-accessible')
                     .removeClass('select2-hidden-accessible')
                     .removeAttr('data-select2-id tabindex aria-hidden');
 
-                // ب. إظهار العنصر وتحديث حقول العرض
+                let dz = $(this).find('.my-dropzone-area');
+                dz.attr('data-existing-images', '[]'); 
+
                 $(this).slideDown();
+
                 updateOfferFields($(this));
 
-                // ج. تفعيل Select2 مع ID فريد
                 $(this).find('select').each(function() {
                     const randomSuffix = Math.floor(Math.random() * 1000000);
                     const originalName = $(this).attr('name').replace(/\[|\]/g, '');
@@ -178,18 +176,8 @@
                     });
                 });
 
-                // د. [الجديد] تفعيل Dropzone على العنصر الجديد فقط
-                initializeDropzone($(this).find('.my-dropzone-area'));
+                initializeDropzone(dz);
             },
-
-            hide: function(deleteElement) {
-                if (confirm('{{ __('site.confirm_delete') }}')) {
-                    $(this).slideUp(deleteElement, function() {
-                        $(this).remove();
-                        validateUniqueSizes();
-                    });
-                }
-            }
         });
 
 
