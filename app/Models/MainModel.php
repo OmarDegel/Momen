@@ -84,6 +84,9 @@ class MainModel extends Model
     public function nameLang($locale = null)
     {
         $data = $this->name;
+        if (!$data || !is_array($data)) {
+            return null;
+        }
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();
@@ -95,16 +98,26 @@ class MainModel extends Model
     public function contentLang($locale = null)
     {
         $data = $this->content;
+
+        if (!$data || !is_array($data)) {
+            return null;
+        }
+
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();
-            return $data[$userLang];
+            return $data[$userLang] ?? null;
         }
+
         return $data[$locale] ?? null;
     }
+
     public function titleLang($locale = null)
     {
         $data = $this->title;
+        if (!$data || !is_array($data)) {
+            return null;
+        }
         if ($locale == null) {
             $user = auth()->guard("api")->user();
             $userLang = $user ? $user->locale : app()->getLocale();

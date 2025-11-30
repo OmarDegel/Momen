@@ -15,7 +15,7 @@ class OrderItemReturnController extends MainController
     }
     public function index()
     {
-        $relations = ['user', 'order', 'orderItem.product', 'reason', 'coupon', 'product'];
+        $relations = ['user', 'order', 'orderItem.product', 'reason', 'coupon'];
         $orderItemReturns = OrderItemReturn::with($relations)->paginate($this->perPage);
         $transactionsStatuses = collect(StatusOrderItemReturnEnum::cases())
             ->mapWithKeys(fn($status) => [$status->value => $status->label()])
@@ -44,8 +44,9 @@ class OrderItemReturnController extends MainController
      */
     public function show(string $id)
     {
-        $data = ['user', 'order', 'orderItem', 'reason', 'coupon', 'product', 'statuses'];
+        $data = ['user', 'order', 'orderItem', 'reason', 'coupon',  'statuses'];
         $orderItemReturn = OrderItemReturn::with($data)->findOrFail($id);
+        
         return view('admin.orderItemReturns.show', compact('orderItemReturn'));
     }
 

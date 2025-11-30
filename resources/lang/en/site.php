@@ -203,7 +203,7 @@ return array (
   'max_hour_product_in_carts' => 'Maximum Hour Product In Carts',
   'min_amount_product_notify' => 'Minimum Amount Product Notify',
   'delivery_cost' => 'Delivery Cost',
-  'translations' => 'Translations',
+  'translations' => 'Translation',
   'site' => 
   array (
     'colors' => 'colors',

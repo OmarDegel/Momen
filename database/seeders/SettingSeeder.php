@@ -60,7 +60,7 @@ class SettingSeeder extends Seeder
         (44, 'setting', 'social_login', 'social_login', 'yes', 'ar', 0, NULL, '2025-08-14 05:37:36', '2025-08-19 05:35:02'),
         (45, 'setting', 'colors', 'colors', 'yes', 'ar', 0, NULL, '2025-08-19 05:30:41', '2025-08-19 05:46:48'),
         (46, 'setting', 'is_return', 'is_return', 'yes', 'ar', 0, NULL, '2025-08-19 05:30:41', '2025-08-19 05:35:02');
-
+        (47, 'setting', 'return_period_days', 'return_period_days', '20', 'ar', 0, NULL, '2025-08-19 05:30:41', '2025-08-19 05:35:02');
         ");
     }
 }

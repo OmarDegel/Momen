@@ -1,5 +1,5 @@
 <script>
-    $(document).on('change', '.change-status', function() {
+    $(document).on('change', '.change-status-order', function() {
         let select = $(this);
         let newStatus = select.val();
         let selectId = select.attr('id');

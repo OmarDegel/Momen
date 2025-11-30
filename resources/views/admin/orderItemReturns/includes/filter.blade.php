@@ -1,13 +1,5 @@
 @include('admin.layouts.modals.filter.header', ['model' => 'orders'])
 
-
-
-
-
-
-
-
-
 {{-- status --}}
 
 <div class="col-md-6">

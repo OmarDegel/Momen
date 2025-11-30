@@ -134,6 +134,10 @@ class User extends Authenticatable implements LaratrustUser, JWTSubject
     {
         return $this->hasMany(Address::class);
     }
+    public function OrderItemReturns()
+    {
+        return $this->hasMany(OrderItemReturn::class);
+    }
     public function scopeFilter($query, $request = null)
     {
         $request = $request ?? request();
@@ -144,6 +148,10 @@ class User extends Authenticatable implements LaratrustUser, JWTSubject
             ->sort($request)
             ->trash($request);
         return $query;
+    }
+    public function totalPriceInCartBeforeDiscount()
+    {
+        return $this->cart->cartItems->sum('total');
     }
     public function totalPriceInCart()
     {
@@ -168,7 +176,7 @@ class User extends Authenticatable implements LaratrustUser, JWTSubject
     public function markNotificationAsRead($notifications)
     {
         foreach ($notifications as $notification) {
-            if(!$notification->read_at){
+            if (!$notification->read_at) {
                 $notification->markAsRead();
             }
         }

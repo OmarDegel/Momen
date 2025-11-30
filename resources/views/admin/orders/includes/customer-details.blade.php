@@ -42,7 +42,7 @@
             'select_name' => 'status',
             'select_function' => $availableStatuses,
             'select_value' => $order->status->value,
-            'select_class' => 'select2 change-status',
+            'select_class' => 'select2 change-status-order',
             'select2' => true,
             'select_id' => 'status' . $order->id,
             ])

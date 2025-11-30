@@ -91,11 +91,11 @@ class CartItemsService
         $data['shipping'] = $product->shipping;
         $data['is_return'] = $product->is_returned;
 
-        // $returnPeriodDays = (int) Setting::get('return_period_days');
+        $returnPeriodDays =  Setting::where('key', 'return_period_days')->first();;
 
-        // $data['return_at'] = $data['is_return'] == 1
-        //     ? now()->addDays($returnPeriodDays)
-        //     : null;
+        $data['return_at'] = $data['is_return'] == 1
+            ? now()->addDays($returnPeriodDays)
+            : null;
 
         return $data;
     }
@@ -115,7 +115,7 @@ class CartItemsService
         $cartItem = $cart->cartItems()
             ->where(function ($q) use ($productId) {
                 $q->where('product_id', $productId)
-                  ->orWhere('product_child_id', $productId);
+                    ->orWhere('product_child_id', $productId);
             })
             ->first();
 
@@ -145,4 +145,3 @@ class CartItemsService
         return true;
     }
 }
-

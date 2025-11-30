@@ -64,10 +64,8 @@ class OrderItemReturn extends MainModel
     {
         return $this->belongsTo(Coupon::class);
     }
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
+
+    
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by', 'id');

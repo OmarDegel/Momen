@@ -26,7 +26,6 @@
                 </div>
             </div>
 
-            {{-- ORDER INFO --}}
             <div class="row mb-3">
                 <div class="col-md-4"><strong>{{ __('site.order_id') }}:</strong> #{{ $order->id }}</div>
                 <div class="col-md-4"><strong>{{ __('site.payment') }}:</strong> {{ $order->payment->nameLang() ?? '-'

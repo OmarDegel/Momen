@@ -101,10 +101,7 @@ class Order extends MainModel
     {
         return $this->hasMany(OrderItem::class);
     }
-    public function orderStatuses()
-    {
-        return $this->hasMany(OrderStatus::class);
-    }
+
     public function orderItemReturns()
     {
         return $this->hasMany(OrderItemReturn::class);
@@ -113,9 +110,8 @@ class Order extends MainModel
     {
         return $this->belongsTo(OrderReject::class);
     }
-    public function orderMeta()
-    {
-        return $this->hasOne(OrderMeta::class);
+    public function orderStatuses(){
+        return $this->hasMany(OrderStatus::class);
     }
     public function scopeApplySorting($query, $request)
     {

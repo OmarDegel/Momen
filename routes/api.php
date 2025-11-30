@@ -3,19 +3,22 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ReasonController;
 use App\Http\Controllers\Api\RegionController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\DeliveryTimeController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\Auth\PasswordController;
 
 Route::group(['middleware' => ['userLangApi', 'site-open']], function () {
@@ -50,7 +53,7 @@ Route::group(['middleware' => ['userLangApi', 'site-open']], function () {
     Route::apiResource('cart_items', CartController::class)->except(('update'));
     //end cart
     //notification
-    Route::resource('notifications', NotificationController::class)->only(['index', 'destroy']);
+    Route::apiResource('notifications', NotificationController::class)->only(['index', 'destroy']);
     Route::put('notifications/read/{id}', [NotificationController::class, 'read']);
     Route::put('notifications/read-all', [NotificationController::class, 'readAll']);
 
@@ -74,5 +77,18 @@ Route::group(['middleware' => ['userLangApi', 'site-open']], function () {
     //can be in one func 
 
     //end profile
+    //addresses
+    Route::apiResource('addresses', AddressController::class);
+    //end addresses
+
+    //review
+    Route::apiResource('reviews', ReviewController::class);
+    //end review
+
+    //order
+    Route::apiResource('orders', OrderController::class);
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+    //end order
   });
+  Route::get('products/{product}/reviews', [ReviewController::class, 'productReviews']);
 });

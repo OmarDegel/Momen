@@ -47,4 +47,8 @@ class Coupon extends MainModel
             ->where('day_start', '<=', Carbon::now())
             ->where(fn($q) => $q->whereColumn('use_limit', '>', 'use_count'));
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

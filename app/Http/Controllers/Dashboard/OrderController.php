@@ -10,8 +10,10 @@ use App\Models\Payment;
 use App\Models\DeliveryTime;
 use Illuminate\Http\Request;
 use App\Enums\StatusOrderEnum;
+use App\Models\OrderItemReturn;
 use App\Helpers\StatusOrderHelper;
 use App\Http\Controllers\Controller;
+use App\Enums\StatusOrderItemReturnEnum;
 use App\Http\Controllers\Dashboard\MainController;
 
 class OrderController extends MainController
@@ -60,6 +62,11 @@ class OrderController extends MainController
     {
         $data = ['user', 'address', 'delivery', 'payment', 'deliveryTime', 'orderItems.product', 'orderStatuses'];
         $order = Order::with($data)->findOrFail($id);
-        return view('admin.orders.show', compact('order'));
+        $relations = ['user', 'order', 'orderItem.product', 'reason', 'coupon'];
+        $orderItemReturns = OrderItemReturn::with($relations)->paginate($this->perPage);
+        $transactionsStatuses = collect(StatusOrderItemReturnEnum::cases())
+            ->mapWithKeys(fn($status) => [$status->value => $status->label()])
+            ->toArray();
+        return view('admin.orders.show', compact('order', 'orderItemReturns', 'transactionsStatuses'));
     }
 }
